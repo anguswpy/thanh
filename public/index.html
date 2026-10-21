@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nguyễn Đạo Thành ✨ Official Fanclub & Photocard Archive</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Nguyễn Đạo Thành ✨ Official 3D Fan Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Plus Jakarta Sans, Quicksand & Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Quicksand:wght@500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <!-- Phosphor Icons for cute UI & social icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Quicksand:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Three.js for the Interactive 3D Escalator Outfit Model -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -41,22 +40,6 @@
                             400: '#a67aff',
                             500: '#8b4dff',
                         }
-                    },
-                    animation: {
-                        'float-slow': 'floatSlow 6s ease-in-out infinite',
-                        'float-delayed': 'floatSlow 7s ease-in-out 2s infinite',
-                        'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
-                        'spin-slow': 'spin 14s linear infinite',
-                    },
-                    keyframes: {
-                        floatSlow: {
-                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-10px) rotate(2deg)' },
-                        },
-                        pulseSoft: {
-                            '0%, 100%': { opacity: 1, transform: 'scale(1)' },
-                            '50%': { opacity: 0.8, transform: 'scale(1.04)' },
-                        }
                     }
                 }
             }
@@ -65,1529 +48,862 @@
 
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #fff5f8 0%, #f8f5ff 45%, #eef8ff 100%);
+            --bg-gradient: linear-gradient(135deg, #fff5f8 0%, #f8f5ff 50%, #eef8ff 100%);
         }
         .dark {
-            --bg-gradient: linear-gradient(135deg, #171124 0%, #1e142f 50%, #131b2e 100%);
+            --bg-gradient: linear-gradient(135deg, #130f1e 0%, #191229 50%, #101726 100%);
         }
         body {
             background: var(--bg-gradient);
             background-attachment: fixed;
             overflow-x: hidden;
         }
-        /* Subtle Polka Dot & Star Pattern Overlay */
-        .bg-kawaii-pattern {
-            background-image: radial-gradient(rgba(255, 117, 168, 0.16) 1.5px, transparent 1.5px),
-                              radial-gradient(rgba(166, 122, 255, 0.14) 1.5px, transparent 1.5px);
-            background-size: 36px 36px;
-            background-position: 0 0, 18px 18px;
-        }
-        /* Holographic Rainbow Shimmer Effect for Idol Cards */
         .holo-card {
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
-            transform-style: preserve-3d;
-        }
-        .holo-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-                125deg,
-                transparent 20%,
-                rgba(255, 182, 219, 0.35) 36%,
-                rgba(195, 177, 255, 0.35) 48%,
-                rgba(162, 232, 255, 0.35) 60%,
-                rgba(255, 241, 176, 0.3) 72%,
-                transparent 85%
-            );
-            background-size: 250% 250%;
-            opacity: 0;
-            transition: opacity 0.4s ease, background-position 0.4s ease;
-            pointer-events: none;
-            z-index: 20;
-            mix-blend-mode: overlay;
-        }
-        .holo-card:hover::before {
-            opacity: 1;
-            background-position: 100% 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .holo-card:hover {
-            transform: translateY(-6px) rotate(-0.7deg);
-            box-shadow: 0 22px 45px -15px rgba(250, 70, 135, 0.28),
-                        0 10px 25px -10px rgba(139, 77, 255, 0.22);
+            transform: translateY(-4px);
+            box-shadow: 0 18px 35px -12px rgba(250, 70, 135, 0.22);
         }
-        /* Pride / Femboy / Rainbow Soft Gradient Border */
-        .pride-pill {
-            background: linear-gradient(90deg, #ff7eb3, #ff758c, #ffb199, #a685e2, #7fd8be, #70b5f9);
-            background-size: 200% 200%;
-            animation: rainbowFlow 6s ease infinite;
-        }
-        .femboy-pill {
-            background: linear-gradient(90deg, #ff85b3 0%, #ffb8d2 30%, #ffffff 50%, #9ad9ff 75%, #ff85b3 100%);
-            background-size: 200% 100%;
-            animation: rainbowFlow 6s ease infinite;
-        }
-        @keyframes rainbowFlow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        /* Floating Heart Particle Animation */
         @keyframes floatUpHeart {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(0.7) rotate(0deg);
-            }
-            60% {
-                opacity: 0.95;
-                transform: translateY(-95px) scale(1.15) rotate(12deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-170px) scale(0.85) rotate(-12deg);
-            }
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            100% { opacity: 0; transform: translateY(-130px) scale(1.15); }
         }
         .floating-heart {
             position: fixed;
             pointer-events: none;
             z-index: 9999;
-            animation: floatUpHeart 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: floatUpHeart 1.2s ease-out forwards;
         }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
+        #threeCanvasContainer canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            cursor: grab;
         }
-        ::-webkit-scrollbar-track {
-            background: #fff5f8;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: #171124;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #ffa9ca, #c6adff);
-            border-radius: 9999px;
-            border: 2px solid #fff5f8;
+        #threeCanvasContainer canvas:active {
+            cursor: grabbing;
         }
     </style>
 </head>
 
-<body class="text-slate-800 dark:text-slate-100 antialiased selection:bg-sakura-300 selection:text-sakura-900 bg-kawaii-pattern min-h-screen flex flex-col">
+<body class="text-slate-800 dark:text-slate-100 antialiased selection:bg-sakura-300 selection:text-sakura-900 min-h-screen flex flex-col">
 
-    <!-- Top Announcement Marquee Banner -->
-    <div class="w-full bg-gradient-to-r from-sakura-400 via-lilac-400 to-sky-400 text-white text-xs sm:text-sm font-semibold py-2 px-4 shadow-sm relative z-40 overflow-hidden">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2 truncate">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-white/25 backdrop-blur-sm">
-                    🐾 OFFICIAL STAN HUB
-                </span>
-                <span class="truncate">Welcome to Nguyễn Đạo Thành's Fan Archive! ✨ CUHK IBBA • CW Chu College • Sweet Tooth & Cat Lover 🍰🐱</span>
-            </div>
-            <div class="hidden md:flex items-center gap-4 text-xs font-bold">
-                <span>IG: @iamfinethanhyou</span>
-                <span>•</span>
-                <span>FB: Dao Thanh</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sticky Glass Navigation Header -->
-    <header class="sticky top-0 z-40 backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 border-b border-sakura-200/70 dark:border-slate-800 transition-colors">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
-            <!-- Brand / Idol Logo -->
-            <a href="#top" class="flex items-center gap-3 group">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sakura-400 via-lilac-400 to-sky-300 p-0.5 shadow-md shadow-sakura-300/40 group-hover:scale-105 transition-transform">
-                    <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] flex items-center justify-center text-xl">
-                        🐱
-                    </div>
+    <!-- Minimal Sticky Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 border-b border-sakura-200/60 dark:border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+            <a href="#top" class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sakura-400 to-lilac-400 flex items-center justify-center text-white font-bold shadow-sm">
+                    🐱
                 </div>
                 <div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="font-display font-bold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-sakura-600 via-lilac-500 to-sky-500 bg-clip-text text-transparent">
-                            Đạo Thành
-                        </span>
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-sakura-100 dark:bg-sakura-950/80 text-sakura-600 dark:text-sakura-300 font-bold border border-sakura-200 dark:border-sakura-800">
-                            08.12.2008
-                        </span>
-                    </div>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                        CUHK IBBA • CW Chu College 🌸
-                    </p>
+                    <span class="font-display font-extrabold text-lg bg-gradient-to-r from-sakura-600 to-lilac-500 bg-clip-text text-transparent">
+                        Nguyễn Đạo Thành
+                    </span>
+                    <span class="hidden sm:inline-block ml-1.5 text-[11px] px-2 py-0.5 rounded-full bg-sakura-100 dark:bg-slate-800 text-sakura-600 dark:text-sakura-300 font-bold">
+                        CUHK IBBA • CW Chu
+                    </span>
                 </div>
             </a>
 
-            <!-- Desktop Navigation Links -->
-            <nav class="hidden lg:flex items-center gap-1 bg-sakura-50/80 dark:bg-slate-800/70 p-1.5 rounded-full border border-sakura-200/60 dark:border-slate-700">
-                <a href="#profile" class="px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 hover:text-sakura-500 transition-all">
-                    ✨ Idol Profile
-                </a>
-                <a href="#photocards" class="px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 hover:text-sakura-500 transition-all">
-                    📸 Photocard Archive
-                </a>
-                <a href="#fanzone" class="px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 hover:text-sakura-500 transition-all">
-                    🍰 Sweet & Kitty Zone
-                </a>
-                <a href="#socials" class="px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 hover:text-sakura-500 transition-all">
-                    💌 Connect
-                </a>
+            <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                <a href="#top" class="hover:text-sakura-500 transition-colors">3D Model</a>
+                <a href="#about" class="hover:text-sakura-500 transition-colors">Profile</a>
+                <a href="#gallery" class="hover:text-sakura-500 transition-colors">Photos</a>
             </nav>
 
-            <!-- Action Buttons (Lightstick Cheer, GitHub Sync Info, Theme Toggle) -->
             <div class="flex items-center gap-2">
-                <!-- Interactive Fan Cheer Button -->
-                <button id="headerCheerBtn" onclick="triggerFanCheer(event)" class="flex items-center gap-2 px-3.5 py-2 rounded-full bg-gradient-to-r from-sakura-500 to-lilac-500 hover:from-sakura-600 hover:to-lilac-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-sakura-400/30 active:scale-95 transition-all">
-                    <i class="ph-fill ph-heart text-base animate-bounce"></i>
-                    <span>Cheer</span>
-                    <span id="headerHeartCount" class="bg-white/25 px-2 py-0.5 rounded-full text-xs font-mono">2,812</span>
+                <button onclick="triggerFanCheer(event)" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs shadow-sm active:scale-95 transition-all">
+                    <i class="ph-fill ph-heart"></i>
+                    <span id="headerHeartCount" class="font-mono">2,812</span>
                 </button>
-
-                <!-- Easy GitHub Photo Setup Modal Trigger -->
-                <button onclick="openGithubModal()" class="p-2.5 rounded-full bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-sakura-400 hover:text-sakura-500 transition-all shadow-sm" title="How to Auto-Upload Photos via GitHub">
-                    <i class="ph ph-github-logo text-lg"></i>
+                <button onclick="openVercelModal()" class="px-3 py-1.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs flex items-center gap-1 hover:opacity-90 transition-opacity" title="Vercel Server-Side Guide">
+                    <i class="ph-fill ph-triangle"></i>
+                    <span class="hidden sm:inline">Vercel Setup</span>
                 </button>
-
-                <!-- Dark / Dreamy Night Mode Button -->
-                <button onclick="toggleTheme()" class="p-2.5 rounded-full bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-sakura-400 hover:text-sakura-500 transition-all shadow-sm" title="Toggle Day / Starlight Mode">
-                    <i id="themeIcon" class="ph-fill ph-moon-stars text-lg text-lilac-500"></i>
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 text-slate-700 dark:text-slate-200">
+                    <i id="themeIcon" class="ph-fill ph-moon-stars text-base text-lilac-500"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <main id="top" class="flex-grow">
-        <!-- HERO SECTION -->
-        <section class="relative pt-8 pb-16 sm:py-20 overflow-hidden">
-            <!-- Decorative Floating Blobs -->
-            <div class="absolute -top-20 -left-20 w-80 h-80 bg-sakura-300/30 dark:bg-sakura-600/15 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute top-28 -right-20 w-96 h-96 bg-lilac-300/30 dark:bg-lilac-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <main id="top" class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-16">
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-                    
-                    <!-- Left Column: Fan Introduction & Idol Tags -->
-                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                        
-                        <!-- Identity & Pride Pills -->
-                        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
-                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold text-white pride-pill shadow-sm">
-                                🏳️‍🌈 Proudly Gay
+        <!-- HERO + 3D MODEL SECTION -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <!-- Left: Clean & Concise Bio (6 Cols) -->
+            <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-sky-500 text-white shadow-sm">
+                        🏳️‍🌈 Gay
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-sakura-100 dark:bg-sakura-950 text-sakura-600 dark:text-sakura-300 border border-sakura-300 dark:border-sakura-800">
+                        🎀 Femboy Aesthetic
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        🎂 08.12.2008
+                    </span>
+                </div>
+
+                <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+                    Nguyễn <span class="bg-gradient-to-r from-sakura-500 via-lilac-500 to-sky-400 bg-clip-text text-transparent">Đạo Thành</span>
+                </h1>
+
+                <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
+                    Studying <strong>IBBA at CUHK</strong> & living at <strong>CW Chu College</strong>. Powered by sweet desserts 🍰, cute cats 🐱, and iconic pastel fits. Drag the 3D model to inspect his signature striped crop-top, heart choker & pleated skirt look!
+                </p>
+
+                <!-- Social Quick Links -->
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
+                    <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-sm shadow-md hover:opacity-95 transition-all">
+                        <i class="ph-fill ph-instagram-logo text-lg"></i>
+                        <span>@iamfinethanhyou</span>
+                    </a>
+                    <a href="https://www.facebook.com/search/top/?q=Dao%20Thanh" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 font-bold text-sm hover:border-sakura-400 transition-all">
+                        <i class="ph-fill ph-facebook-logo text-lg text-blue-500"></i>
+                        <span>FB: Dao Thanh</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Interactive 3D Character Stage (6 Cols) -->
+            <div class="lg:col-span-6">
+                <div class="bg-white/85 dark:bg-slate-800/85 backdrop-blur-xl rounded-[28px] p-4 border-2 border-sakura-200/80 dark:border-slate-700 shadow-xl relative">
+                    <!-- Top 3D Stage Bar -->
+                    <div class="flex items-center justify-between px-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-gradient-to-r from-sakura-500 to-lilac-500 text-white">
+                                3D FIGURINE
                             </span>
-                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold text-slate-900 femboy-pill shadow-sm border border-sakura-200">
-                                🎀 Certified Cutie Femboy
-                            </span>
-                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/90 dark:bg-slate-800/90 text-sakura-600 dark:text-sakura-300 border border-sakura-200 dark:border-slate-700 shadow-sm">
-                                🎓 CUHK IBBA
-                            </span>
-                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/90 dark:bg-slate-800/90 text-lilac-600 dark:text-lilac-300 border border-lilac-200 dark:border-slate-700 shadow-sm">
-                                🏡 CW Chu College
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                                Escalator Look • Drag to Rotate 360°
                             </span>
                         </div>
-
-                        <!-- Main Fan Title -->
-                        <div class="space-y-2">
-                            <p class="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-sakura-500 dark:text-sakura-400">
-                                ★ NUMBER ONE VISUAL & SWEETHEART STAN PAGE ★
-                            </p>
-                            <h1 class="font-display font-extrabold text-4xl sm:text-6xl lg:text-7xl tracking-tight leading-[1.08]">
-                                Nguyễn <span class="bg-gradient-to-r from-sakura-500 via-lilac-500 to-sky-400 bg-clip-text text-transparent">Đạo Thành</span>
-                            </h1>
-                            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed pt-2">
-                                Welcome to the official fan shrine for <strong class="text-sakura-600 dark:text-sakura-300">Đạo Thành</strong>! Studying <strong>IBBA at CUHK</strong>, living his best cozy life at <strong>CW Chu College</strong>, powered by sweet desserts 🍰, cute outfits 🌸, and endless love for cats 🐱.
-                            </p>
-                        </div>
-
-                        <!-- Quick Idol Vital Stats Bar -->
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                            <div class="bg-white/85 dark:bg-slate-800/85 backdrop-blur-md p-3.5 rounded-2xl border border-sakura-200/80 dark:border-slate-700 shadow-sm">
-                                <div class="text-xs text-slate-400 font-semibold flex items-center justify-center lg:justify-start gap-1">
-                                    <i class="ph-fill ph-cake text-sakura-500"></i> Birthday
-                                </div>
-                                <div class="font-display font-bold text-base sm:text-lg mt-0.5 text-slate-800 dark:text-white">
-                                    8 / 12 / 2008
-                                </div>
-                                <div class="text-[11px] text-sakura-500 font-semibold">'08 Liner Baby ✨</div>
-                            </div>
-
-                            <div class="bg-white/85 dark:bg-slate-800/85 backdrop-blur-md p-3.5 rounded-2xl border border-sakura-200/80 dark:border-slate-700 shadow-sm">
-                                <div class="text-xs text-slate-400 font-semibold flex items-center justify-center lg:justify-start gap-1">
-                                    <i class="ph-fill ph-graduation-cap text-lilac-500"></i> Major
-                                </div>
-                                <div class="font-display font-bold text-base sm:text-lg mt-0.5 text-slate-800 dark:text-white">
-                                    IBBA @ CUHK
-                                </div>
-                                <div class="text-[11px] text-lilac-500 font-semibold">Future CEO 💼💅</div>
-                            </div>
-
-                            <div class="bg-white/85 dark:bg-slate-800/85 backdrop-blur-md p-3.5 rounded-2xl border border-sakura-200/80 dark:border-slate-700 shadow-sm">
-                                <div class="text-xs text-slate-400 font-semibold flex items-center justify-center lg:justify-start gap-1">
-                                    <i class="ph-fill ph-house-line text-sky-500"></i> College
-                                </div>
-                                <div class="font-display font-bold text-base sm:text-lg mt-0.5 text-slate-800 dark:text-white">
-                                    CW Chu
-                                </div>
-                                <div class="text-[11px] text-sky-500 font-semibold">Resident Cutie 🏠</div>
-                            </div>
-
-                            <div class="bg-white/85 dark:bg-slate-800/85 backdrop-blur-md p-3.5 rounded-2xl border border-sakura-200/80 dark:border-slate-700 shadow-sm">
-                                <div class="text-xs text-slate-400 font-semibold flex items-center justify-center lg:justify-start gap-1">
-                                    <i class="ph-fill ph-cat text-amber-500"></i> Favorites
-                                </div>
-                                <div class="font-display font-bold text-base sm:text-lg mt-0.5 text-slate-800 dark:text-white">
-                                    Sweets & Cats
-                                </div>
-                                <div class="text-[11px] text-amber-500 font-semibold">100% Sweetness 🍓🐾</div>
-                            </div>
-                        </div>
-
-                        <!-- Call-to-Action Buttons -->
-                        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
-                            <a href="#photocards" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sakura-500 via-sakura-400 to-lilac-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-sakura-400/30 hover:scale-[1.02] active:scale-95 transition-all">
-                                <i class="ph-fill ph-sparkle text-lg"></i>
-                                <span>Explore Photocard Gallery</span>
-                            </a>
-
-                            <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white dark:bg-slate-800 border-2 border-sakura-200 dark:border-slate-700 hover:border-sakura-400 text-slate-800 dark:text-white font-bold text-sm sm:text-base shadow-sm hover:scale-[1.02] transition-all">
-                                <i class="ph-fill ph-instagram-logo text-xl text-pink-500"></i>
-                                <span>@iamfinethanhyou</span>
-                            </a>
-
-                            <button onclick="openUploadPhotoModal()" class="inline-flex items-center gap-2 px-4 py-3.5 rounded-2xl bg-sakura-100/90 dark:bg-slate-800/90 text-sakura-700 dark:text-sakura-300 font-bold text-sm hover:bg-sakura-200 transition-all">
-                                <i class="ph-bold ph-plus-circle text-lg"></i>
-                                <span>Add Photo</span>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="trigger3DJump()" class="px-2.5 py-1 rounded-lg bg-sakura-100 dark:bg-slate-700 text-sakura-600 dark:text-sakura-300 text-xs font-bold hover:bg-sakura-200 transition-colors">
+                                ✨ Pose / Jump
+                            </button>
+                            <button onclick="toggleAutoSpin()" id="spinToggleBtn" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold">
+                                ⟳ Spin: ON
                             </button>
                         </div>
                     </div>
 
-                    <!-- Right Column: Featured 3D Holographic Idol Card -->
-                    <div class="lg:col-span-5 flex justify-center">
-                        <div class="relative w-full max-w-sm">
-                            <!-- Floating Stickers around the card -->
-                            <div class="absolute -top-5 -left-5 z-30 bg-white dark:bg-slate-800 px-3.5 py-2 rounded-2xl shadow-lg border border-sakura-200 dark:border-slate-700 animate-float-slow flex items-center gap-2">
-                                <span class="text-2xl">🍓</span>
-                                <div class="text-left">
-                                    <div class="text-[10px] font-bold uppercase text-sakura-500">Sweetness Level</div>
-                                    <div class="text-xs font-extrabold">999,999% MAX</div>
-                                </div>
-                            </div>
-
-                            <div class="absolute -bottom-5 -right-4 z-30 bg-white dark:bg-slate-800 px-3.5 py-2 rounded-2xl shadow-lg border border-lilac-200 dark:border-slate-700 animate-float-delayed flex items-center gap-2">
-                                <span class="text-2xl">🐱</span>
-                                <div class="text-left">
-                                    <div class="text-[10px] font-bold uppercase text-lilac-500">Cat Whisperer</div>
-                                    <div class="text-xs font-extrabold">Meow Approved 🐾</div>
-                                </div>
-                            </div>
-
-                            <!-- Main SSR Photocard Frame -->
-                            <div id="heroPhotocard" class="holo-card bg-white dark:bg-slate-800 p-4 rounded-[32px] border-2 border-sakura-200 dark:border-slate-700 shadow-2xl relative">
-                                <!-- Top SSR Rarity Header -->
-                                <div class="flex items-center justify-between mb-3 px-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-gradient-to-r from-amber-300 via-pink-400 to-purple-500 text-white shadow-sm">
-                                            SSR ★ SPECIAL
-                                        </span>
-                                        <span class="text-xs font-bold text-slate-400">#NDT-2008</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-sakura-500 text-sm">
-                                        <i class="ph-fill ph-star"></i>
-                                        <i class="ph-fill ph-star"></i>
-                                        <i class="ph-fill ph-star"></i>
-                                        <i class="ph-fill ph-star"></i>
-                                        <i class="ph-fill ph-star"></i>
-                                    </div>
-                                </div>
-
-                                <!-- Hero Photo Container (Auto-updates with first photo from GitHub/list) -->
-                                <div class="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-gradient-to-br from-sakura-100 via-lilac-100 to-sky-100 dark:from-slate-700 dark:to-slate-800 group">
-                                    <img id="heroMainImage" 
-                                         src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=900&q=80" 
-                                         alt="Nguyễn Đạo Thành Featured Photocard"
-                                         onerror="this.src='https://placehold.co/600x750/ffd0e2/e82368?text=Nguyen+Dao+Thanh+%E2%9C%A8'"
-                                         class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-                                    
-                                    <!-- Cute Overlay Frame Badges -->
-                                    <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                        <span>Visual Center</span>
-                                    </div>
-
-                                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent p-5 text-white">
-                                        <div class="flex items-center gap-1.5 text-xs font-semibold text-sakura-200 mb-0.5">
-                                            <span>🏳️‍🌈 Gay</span>
-                                            <span>•</span>
-                                            <span>🌸 Femboy</span>
-                                            <span>•</span>
-                                            <span>🐱 Cat Boy</span>
-                                        </div>
-                                        <h2 class="font-display font-bold text-2xl">Nguyễn Đạo Thành</h2>
-                                        <p id="heroMainCaption" class="text-xs text-white/85 mt-0.5">
-                                            " powered by strawberry cake, milk tea & kitty cuddles ✨ "
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Photocard Footer Signature & Shuffle Button -->
-                                <div class="mt-3.5 pt-2 flex items-center justify-between px-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs font-bold text-slate-500 dark:text-slate-400">
-                                            📍 CUHK • CW Chu College
-                                        </span>
-                                    </div>
-                                    <button onclick="cycleHeroPhoto()" class="inline-flex items-center gap-1 text-xs font-bold text-sakura-600 dark:text-sakura-400 hover:underline">
-                                        <i class="ph-bold ph-arrows-clockwise"></i> Next Card
-                                    </button>
-                                </div>
-                            </div>
+                    <!-- Three.js Canvas Container -->
+                    <div id="threeCanvasContainer" class="w-full h-[390px] sm:h-[430px] rounded-2xl overflow-hidden bg-gradient-to-b from-sakura-100/70 via-lilac-100/50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative">
+                        <!-- Outfit Callout Pills -->
+                        <div class="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 pointer-events-none">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/50 backdrop-blur-md text-white">
+                                💗 Pink Heart Choker
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/50 backdrop-blur-md text-white">
+                                👚 Striped Crop Top & Skirt
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/50 backdrop-blur-md text-white">
+                                👟 Cat Sneakers
+                            </span>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
 
-        <!-- IDOL PROFILE & BIRTHDAY COUNTDOWN SECTION -->
-        <section id="profile" class="py-14 sm:py-20 relative">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Section Header -->
-                <div class="text-center max-w-2xl mx-auto mb-12">
-                    <span class="px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-sakura-100 dark:bg-sakura-950 text-sakura-600 dark:text-sakura-300 border border-sakura-200 dark:border-sakura-800">
-                        📋 Official Stan Guide
-                    </span>
-                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl mt-3">
-                        Get to Know <span class="text-sakura-500">Đạo Thành</span> 🌸
-                    </h2>
-                    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
-                        Everything a true fan needs to know about CUHK's cutest IBBA student & resident CW Chu College sweetheart.
+        <!-- COMPACT BENTO PROFILE -->
+        <section id="about" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
+                <div class="text-xs font-bold text-sakura-500">🎓 University</div>
+                <div class="font-display font-extrabold text-base mt-1">CUHK — IBBA</div>
+                <div class="text-[11px] text-slate-400">Business Admin</div>
+            </div>
+            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
+                <div class="text-xs font-bold text-lilac-500">🏡 College</div>
+                <div class="font-display font-extrabold text-base mt-1">CW Chu College</div>
+                <div class="text-[11px] text-slate-400">Resident Cutie</div>
+            </div>
+            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
+                <div class="text-xs font-bold text-pink-500">🎂 Birthday</div>
+                <div class="font-display font-extrabold text-base mt-1">8 / 12 / 2008</div>
+                <div id="bdayCountdownMini" class="text-[11px] text-sakura-500 font-bold">Loading...</div>
+            </div>
+            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
+                <div class="text-xs font-bold text-purple-500">🏳️‍🌈 Identity</div>
+                <div class="font-display font-extrabold text-base mt-1">Gay & Femboy</div>
+                <div class="text-[11px] text-slate-400">Pastel Icon 🎀</div>
+            </div>
+            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
+                <div class="text-xs font-bold text-amber-500">🍰 Cravings</div>
+                <div class="font-display font-extrabold text-base mt-1">Sweet Food</div>
+                <div class="text-[11px] text-slate-400">Cakes & Boba 🧋</div>
+            </div>
+            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
+                <div class="text-xs font-bold text-sky-500">🐱 Spirit Animal</div>
+                <div class="font-display font-extrabold text-base mt-1">Cat Lover</div>
+                <div class="text-[11px] text-slate-400">Meow Approved 🐾</div>
+            </div>
+        </section>
+
+        <!-- CLEAN PHOTOCARD GALLERY -->
+        <section id="gallery" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl">
+                            📸 Photocard Archive
+                        </h2>
+                        <span id="syncSourceBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sakura-100 dark:bg-slate-800 text-sakura-600 dark:text-sakura-300">
+                            Auto-Sync Ready
+                        </span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Drop photos (like <code class="font-mono font-bold text-sakura-500">photos/IMG_6962.JPG</code>) into your <code class="font-mono font-bold">photos/</code> folder — automatically loaded via Vercel Server API or GitHub!
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <!-- Left: Detailed Idol Profile Card (7 cols) -->
-                    <div class="lg:col-span-7 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-sakura-200/80 dark:border-slate-700 shadow-xl flex flex-col justify-between">
-                        <div>
-                            <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-sakura-100 dark:border-slate-700">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl bg-sakura-100 dark:bg-sakura-950 flex items-center justify-center text-2xl">
-                                        👑
-                                    </div>
-                                    <div>
-                                        <h3 class="font-display font-bold text-xl">Idol Member Profile</h3>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400">Verified Fanclub Biography & Facts</p>
-                                    </div>
-                                </div>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Active @ CUHK
-                                </span>
-                            </div>
-
-                            <!-- Profile Fact Grid -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
-                                <div class="p-4 rounded-2xl bg-sakura-50/70 dark:bg-slate-900/60 border border-sakura-100 dark:border-slate-700/80">
-                                    <div class="text-xs font-bold text-sakura-500 uppercase">Full Name</div>
-                                    <div class="font-display font-bold text-lg mt-0.5">Nguyễn Đạo Thành</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Nickname: Thành, Cutie Thành ✨</div>
-                                </div>
-
-                                <div class="p-4 rounded-2xl bg-lilac-50/70 dark:bg-slate-900/60 border border-lilac-100 dark:border-slate-700/80">
-                                    <div class="text-xs font-bold text-lilac-500 uppercase">Date of Birth</div>
-                                    <div class="font-display font-bold text-lg mt-0.5">8 / 12 / 2008</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">2008 Gen-Z Icon 🌟</div>
-                                </div>
-
-                                <div class="p-4 rounded-2xl bg-sky-50/70 dark:bg-slate-900/60 border border-sky-100 dark:border-slate-700/80">
-                                    <div class="text-xs font-bold text-sky-500 uppercase">University & Major</div>
-                                    <div class="font-display font-bold text-lg mt-0.5">CUHK — IBBA</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Integrated BBA Business Star 📈</div>
-                                </div>
-
-                                <div class="p-4 rounded-2xl bg-amber-50/70 dark:bg-slate-900/60 border border-amber-100 dark:border-slate-700/80">
-                                    <div class="text-xs font-bold text-amber-500 uppercase">College Home</div>
-                                    <div class="font-display font-bold text-lg mt-0.5">CW Chu College</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Cozy Dorm Community 🏡</div>
-                                </div>
-
-                                <div class="p-4 rounded-2xl bg-pink-50/70 dark:bg-slate-900/60 border border-pink-100 dark:border-slate-700/80">
-                                    <div class="text-xs font-bold text-pink-500 uppercase">Vibe & Identity</div>
-                                    <div class="font-display font-bold text-lg mt-0.5">Gay 🏳️‍🌈 & Femboy 🎀</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Soft pastel aesthetics & fashion icon</div>
-                                </div>
-
-                                <div class="p-4 rounded-2xl bg-purple-50/70 dark:bg-slate-900/60 border border-purple-100 dark:border-slate-700/80">
-                                    <div class="text-xs font-bold text-purple-500 uppercase">Obsessions</div>
-                                    <div class="font-display font-bold text-lg mt-0.5">Sweet Food 🍰 & Cats 🐱</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Will trade business notes for desserts!</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Idol Attribute Stat Bars -->
-                        <div class="space-y-3 pt-4 border-t border-sakura-100 dark:border-slate-700">
-                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                                ✨ Official Idol Stat Meter
-                            </h4>
-                            <div class="space-y-2.5">
-                                <div>
-                                    <div class="flex justify-between text-xs font-bold mb-1">
-                                        <span>🌸 Femboy Cuteness & Drip</span>
-                                        <span class="text-sakura-500">100 / 100</span>
-                                    </div>
-                                    <div class="h-2.5 w-full bg-sakura-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-gradient-to-r from-sakura-400 to-lilac-500 rounded-full w-full"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-xs font-bold mb-1">
-                                        <span>🍰 Sweet Tooth Craving Capacity</span>
-                                        <span class="text-lilac-500">99.9 / 100</span>
-                                    </div>
-                                    <div class="h-2.5 w-full bg-sakura-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-gradient-to-r from-lilac-400 to-pink-500 rounded-full w-[99%]"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-xs font-bold mb-1">
-                                        <span>🐱 Cat Magnetism (Pspsps Power)</span>
-                                        <span class="text-amber-500">100 / 100</span>
-                                    </div>
-                                    <div class="h-2.5 w-full bg-sakura-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-gradient-to-r from-amber-400 to-sakura-500 rounded-full w-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right: Birthday Countdown & Cute TMI Box (5 cols) -->
-                    <div class="lg:col-span-5 flex flex-col gap-6">
-                        
-                        <!-- Birthday Countdown Card -->
-                        <div class="bg-gradient-to-br from-sakura-500 via-lilac-500 to-indigo-500 text-white rounded-3xl p-6 sm:p-7 shadow-xl relative overflow-hidden">
-                            <div class="absolute -right-8 -bottom-8 text-8xl opacity-15 pointer-events-none select-none">
-                                🎂
-                            </div>
-
-                            <div class="flex items-center justify-between gap-2 mb-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md">
-                                    🎉 BIRTHDAY COUNTDOWN
-                                </span>
-                                <!-- Toggle between DD/MM (8 Dec) and MM/DD (Aug 12) -->
-                                <button onclick="toggleBirthdayFormat()" id="bdayFormatBtn" class="text-[11px] font-bold bg-black/25 hover:bg-black/40 px-2.5 py-1 rounded-full transition-colors" title="Switch DD/MM or MM/DD">
-                                    📅 8 Dec 2008 (DD/MM)
-                                </button>
-                            </div>
-
-                            <h3 class="font-display font-extrabold text-2xl sm:text-3xl">
-                                Thành's Special Day! 🎂
-                            </h3>
-                            <p id="bdaySubtext" class="text-xs sm:text-sm text-white/85 mt-1">
-                                Counting down to 8/12 — get the sweet cakes and cat plushies ready!
-                            </p>
-
-                            <!-- Countdown Boxes -->
-                            <div class="grid grid-cols-4 gap-2.5 my-5 text-center">
-                                <div class="bg-white/20 backdrop-blur-md rounded-2xl p-3 border border-white/25">
-                                    <div id="cdDays" class="font-mono font-bold text-2xl sm:text-3xl">00</div>
-                                    <div class="text-[10px] uppercase font-bold tracking-wider opacity-85">Days</div>
-                                </div>
-                                <div class="bg-white/20 backdrop-blur-md rounded-2xl p-3 border border-white/25">
-                                    <div id="cdHours" class="font-mono font-bold text-2xl sm:text-3xl">00</div>
-                                    <div class="text-[10px] uppercase font-bold tracking-wider opacity-85">Hours</div>
-                                </div>
-                                <div class="bg-white/20 backdrop-blur-md rounded-2xl p-3 border border-white/25">
-                                    <div id="cdMins" class="font-mono font-bold text-2xl sm:text-3xl">00</div>
-                                    <div class="text-[10px] uppercase font-bold tracking-wider opacity-85">Mins</div>
-                                </div>
-                                <div class="bg-white/20 backdrop-blur-md rounded-2xl p-3 border border-white/25">
-                                    <div id="cdSecs" class="font-mono font-bold text-2xl sm:text-3xl">00</div>
-                                    <div class="text-[10px] uppercase font-bold tracking-wider opacity-85">Secs</div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between text-xs font-semibold bg-black/20 rounded-2xl px-4 py-2.5">
-                                <span id="ageDisplay">✨ Turning 18 years old!</span>
-                                <button onclick="triggerFanCheer(event)" class="underline font-bold hover:text-sakura-200">
-                                    Send Birthday Wish 💌
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Cute Fan Fact / Starter Pack Card -->
-                        <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-3xl p-6 border border-sakura-200/80 dark:border-slate-700 shadow-xl flex-grow flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="text-xs font-extrabold uppercase tracking-wider text-sakura-500">
-                                        🍬 Đạo Thành Starter Pack
-                                    </span>
-                                    <span class="text-xs font-bold text-slate-400">Tap any badge!</span>
-                                </div>
-                                <h4 class="font-display font-bold text-lg mb-3">
-                                    Things That Make Thành Smile 💖
-                                </h4>
-                                <div class="flex flex-wrap gap-2">
-                                    <button onclick="showToast('🍰 Thành loves strawberry shortcake, macarons & boba!')" class="px-3 py-1.5 rounded-xl bg-sakura-50 dark:bg-slate-700 hover:bg-sakura-100 text-xs font-bold text-sakura-700 dark:text-sakura-200 border border-sakura-200 dark:border-slate-600 transition-all">
-                                        🍰 Strawberry Cake & Boba
-                                    </button>
-                                    <button onclick="showToast('🐱 Every campus cat at CUHK knows Thành by heart!')" class="px-3 py-1.5 rounded-xl bg-lilac-50 dark:bg-slate-700 hover:bg-lilac-100 text-xs font-bold text-lilac-700 dark:text-lilac-200 border border-lilac-200 dark:border-slate-600 transition-all">
-                                        🐱 Fluffy Kittens
-                                    </button>
-                                    <button onclick="showToast('🎀 Peak femboy aesthetics — oversized hoodies & pastel fits!')" class="px-3 py-1.5 rounded-xl bg-pink-50 dark:bg-slate-700 hover:bg-pink-100 text-xs font-bold text-pink-700 dark:text-pink-200 border border-pink-200 dark:border-slate-600 transition-all">
-                                        🎀 Cute Femboy Outfits
-                                    </button>
-                                    <button onclick="showToast('🏡 Late night sweet snacks at CW Chu College!')" class="px-3 py-1.5 rounded-xl bg-sky-50 dark:bg-slate-700 hover:bg-sky-100 text-xs font-bold text-sky-700 dark:text-sky-200 border border-sky-200 dark:border-slate-600 transition-all">
-                                        🏡 CW Chu College Nights
-                                    </button>
-                                    <button onclick="showToast('🏳️‍🌈 Pride & joy! Living authentically and fabulously.')" class="px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-slate-700 hover:bg-amber-100 text-xs font-bold text-amber-700 dark:text-amber-200 border border-amber-200 dark:border-slate-600 transition-all">
-                                        🏳️‍🌈 Boykissers & Pride
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="mt-5 pt-4 border-t border-sakura-100 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
-                                <span>💡 Tip: Click any item above for cute TMI!</span>
-                                <span class="font-bold text-sakura-500">Stan Forever ♥</span>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PHOTOCARD GALLERY (AUTO GITHUB SYNC + EASY PHOTO MANAGER) -->
-        <section id="photocards" class="py-14 sm:py-20 bg-white/50 dark:bg-slate-900/50 border-y border-sakura-200/60 dark:border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
-                <!-- Gallery Header + GitHub Auto-Sync Bar -->
-                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
-                    <div>
-                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-lilac-100 dark:bg-lilac-950 text-lilac-600 dark:text-lilac-300 border border-lilac-200 dark:border-lilac-800">
-                            <span class="w-2 h-2 rounded-full bg-lilac-500 animate-ping"></span>
-                            📸 GitHub Auto-Sync Photocard Gallery
-                        </div>
-                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl mt-3">
-                            Đạo Thành's <span class="bg-gradient-to-r from-sakura-500 to-lilac-500 bg-clip-text text-transparent">Photocard Collection</span> ✨
-                        </h2>
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1.5 max-w-2xl">
-                            Upload any photo into your GitHub repository's <code class="px-1.5 py-0.5 rounded bg-sakura-100 dark:bg-slate-800 text-sakura-600 dark:text-sakura-300 font-mono text-xs font-bold">/photos</code> folder and it automatically appears here as a collectible idol photocard!
-                        </p>
-                    </div>
-
-                    <!-- Easy Action Controls -->
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <button onclick="openUploadPhotoModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition-all">
-                            <i class="ph-bold ph-upload-simple text-base"></i>
-                            <span>+ Add / Preview Photo</span>
-                        </button>
-                        <button onclick="openGithubModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:border-sakura-400 transition-all shadow-sm">
-                            <i class="ph-bold ph-github-logo text-base"></i>
-                            <span id="githubStatusBadge">GitHub Auto-Sync Setup</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Category Filter Pills -->
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-                    <div class="flex flex-wrap items-center gap-2" id="galleryFilters">
-                        <button onclick="filterGallery('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-sakura-500 text-white shadow-sm transition-all">
-                            ✨ All Photocards
-                        </button>
-                        <button onclick="filterGallery('femboy')" data-filter="femboy" class="filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-sakura-200 dark:border-slate-700 hover:border-sakura-400 transition-all">
-                            🎀 Cute & Femboy
-                        </button>
-                        <button onclick="filterGallery('cuhk')" data-filter="cuhk" class="filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-sakura-200 dark:border-slate-700 hover:border-sakura-400 transition-all">
-                            🎓 CUHK & CW Chu
-                        </button>
-                        <button onclick="filterGallery('sweets_cats')" data-filter="sweets_cats" class="filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-sakura-200 dark:border-slate-700 hover:border-sakura-400 transition-all">
-                            🍰🐱 Sweets & Cats
-                        </button>
-                    </div>
-
-                    <div class="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                        <i class="ph-fill ph-cards text-sakura-500 text-base"></i>
-                        <span id="photoCountLabel">Loading photocards...</span>
-                    </div>
-                </div>
-
-                <!-- Photocard Grid Container -->
-                <div id="photocardGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Populated dynamically by JavaScript -->
-                </div>
-
-                <!-- Quick GitHub Dropzone Helper Banner -->
-                <div class="mt-10 bg-gradient-to-r from-sakura-100/90 via-lilac-100/90 to-sky-100/90 dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-800 rounded-3xl p-6 border border-sakura-200 dark:border-slate-700 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="flex items-start sm:items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 flex items-center justify-center text-2xl shadow-sm shrink-0">
-                            📂
-                        </div>
-                        <div>
-                            <h3 class="font-display font-bold text-base sm:text-lg text-slate-800 dark:text-white">
-                                Want to add more of Nguyễn Đạo Thành's photos on GitHub?
-                            </h3>
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-0.5">
-                                Just upload <code class="font-mono font-bold text-sakura-600 dark:text-sakura-400">.jpg / .png / .webp</code> images into the <code class="font-mono font-bold text-sakura-600 dark:text-sakura-400">photos/</code> folder of your GitHub repo! The website scans your <code class="font-mono font-bold">photos/</code> folder via the GitHub API automatically.
-                            </p>
-                        </div>
-                    </div>
-                    <button onclick="openGithubModal()" class="shrink-0 px-5 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm hover:scale-105 transition-transform shadow-md">
-                        Configure GitHub Repo →
+                <div class="flex items-center gap-2">
+                    <button onclick="openUploadPhotoModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs shadow-sm hover:opacity-95">
+                        + Add / Preview Photo
+                    </button>
+                    <button onclick="openVercelModal()" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 font-bold text-xs hover:border-sakura-400">
+                        ⚡ How to Sync on Vercel
                     </button>
                 </div>
+            </div>
 
+            <!-- Photocard Grid -->
+            <div id="photocardGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                <!-- Populated by JS -->
             </div>
         </section>
 
-        <!-- SWEET TREATS & KITTY CORNER + FAN MESSAGE BOARD -->
-        <section id="fanzone" class="py-14 sm:py-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center max-w-2xl mx-auto mb-12">
-                    <span class="px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                        🍰🐱 Interactive Fan Zone
-                    </span>
-                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl mt-3">
-                        Treat <span class="text-sakura-500">Đạo Thành</span> to Sweets & Cats!
-                    </h2>
-                    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
-                        Since Thành loves sweet food and adorable cats, send virtual desserts, pet the CW Chu campus kitty, or leave a fan message!
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    
-                    <!-- Left: Interactive Sweet Cafe & Cat Petting Mini-Game (6 cols) -->
-                    <div class="lg:col-span-6 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-sakura-200/80 dark:border-slate-700 shadow-xl flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="text-xs font-extrabold uppercase tracking-wider text-sakura-500">
-                                    🍓 Virtual Sweet Bar & Cat Cafe
-                                </span>
-                                <span id="happinessStatus" class="px-3 py-1 rounded-full text-xs font-bold bg-sakura-100 dark:bg-slate-700 text-sakura-600 dark:text-sakura-300">
-                                    Happiness: 100% 🥰
-                                </span>
-                            </div>
-
-                            <!-- Interactive Reaction Stage -->
-                            <div class="rounded-2xl bg-gradient-to-br from-sakura-50 via-lilac-50 to-amber-50 dark:from-slate-900 dark:to-slate-800 p-6 border border-sakura-200/60 dark:border-slate-700 text-center relative overflow-hidden my-2">
-                                <div id="mascotAvatar" class="text-6xl sm:text-7xl mb-3 transition-transform duration-300 inline-block select-none cursor-pointer" onclick="giveTreat('🐱', 'Purrrr~ You petted Thành\'s favorite kitty!')">
-                                    😻🍰
-                                </div>
-                                <h3 id="mascotSpeech" class="font-display font-bold text-lg sm:text-xl text-slate-800 dark:text-white">
-                                    "Yay! Give me sweet desserts & cute kitties please~"
-                                </h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                    Total Treats & Kitty Pets Gifted by Fans: <strong id="treatCounter" class="text-sakura-600 dark:text-sakura-400 font-mono text-sm">428</strong>
-                                </p>
-                            </div>
-
-                            <!-- Buttons to Feed Sweets or Pet Cats -->
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
-                                <button onclick="giveTreat('🍰', 'Yum!! Strawberry shortcake is the best! 🍓')" class="p-3.5 rounded-2xl bg-sakura-50 dark:bg-slate-700/80 hover:bg-sakura-100 dark:hover:bg-slate-700 border border-sakura-200 dark:border-slate-600 flex flex-col items-center gap-1 active:scale-95 transition-all">
-                                    <span class="text-2xl">🍰</span>
-                                    <span class="text-xs font-bold">Strawberry Cake</span>
-                                </button>
-                                <button onclick="giveTreat('🧋', 'Brown sugar boba with 100% sugar level! 🧋✨')" class="p-3.5 rounded-2xl bg-amber-50 dark:bg-slate-700/80 hover:bg-amber-100 dark:hover:bg-slate-700 border border-amber-200 dark:border-slate-600 flex flex-col items-center gap-1 active:scale-95 transition-all">
-                                    <span class="text-2xl">🧋</span>
-                                    <span class="text-xs font-bold">Sweet Boba Tea</span>
-                                </button>
-                                <button onclick="giveTreat('🍨', 'Matcha & vanilla parfait after CUHK lectures! 🍨')" class="p-3.5 rounded-2xl bg-lilac-50 dark:bg-slate-700/80 hover:bg-lilac-100 dark:hover:bg-slate-700 border border-lilac-200 dark:border-slate-600 flex flex-col items-center gap-1 active:scale-95 transition-all">
-                                    <span class="text-2xl">🍨</span>
-                                    <span class="text-xs font-bold">Ice Cream Sundae</span>
-                                </button>
-                                <button onclick="giveTreat('🍩', 'Pink glazed donut for maximum sugar rush! 🍩💖')" class="p-3.5 rounded-2xl bg-pink-50 dark:bg-slate-700/80 hover:bg-pink-100 dark:hover:bg-slate-700 border border-pink-200 dark:border-slate-600 flex flex-col items-center gap-1 active:scale-95 transition-all">
-                                    <span class="text-2xl">🍩</span>
-                                    <span class="text-xs font-bold">Pink Donut</span>
-                                </button>
-                                <button onclick="giveTreat('🐱', 'Meow~ A fluffy kitty jumped into Thành\'s lap! 🐾')" class="p-3.5 rounded-2xl bg-sky-50 dark:bg-slate-700/80 hover:bg-sky-100 dark:hover:bg-slate-700 border border-sky-200 dark:border-slate-600 flex flex-col items-center gap-1 active:scale-95 transition-all">
-                                    <span class="text-2xl">🐱</span>
-                                    <span class="text-xs font-bold">Cuddle Kitty</span>
-                                </button>
-                                <button onclick="giveTreat('🎀', 'New pastel femboy accessory unlocked! So cute~ 🌸')" class="p-3.5 rounded-2xl bg-purple-50 dark:bg-slate-700/80 hover:bg-purple-100 dark:hover:bg-slate-700 border border-purple-200 dark:border-slate-600 flex flex-col items-center gap-1 active:scale-95 transition-all">
-                                    <span class="text-2xl">🎀</span>
-                                    <span class="text-xs font-bold">Cute Ribbon</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 pt-4 border-t border-sakura-100 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
-                            <span>🐾 Every click sends floating hearts & saves to your browser!</span>
-                            <span class="font-bold text-sakura-500">100% Sweet Boy</span>
-                        </div>
-                    </div>
-
-                    <!-- Right: Fanclub Message Wall (6 cols) -->
-                    <div class="lg:col-span-6 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-sakura-200/80 dark:border-slate-700 shadow-xl flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <span class="text-xs font-extrabold uppercase tracking-wider text-lilac-500">
-                                        💌 Fanclub Cheer Wall
-                                    </span>
-                                    <h3 class="font-display font-bold text-xl mt-0.5">
-                                        Leave a Sweet Note for Thành
-                                    </h3>
-                                </div>
-                                <span class="text-2xl">✨</span>
-                            </div>
-
-                            <!-- Input Form -->
-                            <form onsubmit="submitFanNote(event)" class="space-y-3 mb-5">
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                                    <input id="fanNameInput" type="text" required placeholder="Your Name / Stan Tag" 
-                                           class="sm:col-span-1 px-3.5 py-2.5 rounded-xl bg-sakura-50/70 dark:bg-slate-900 border border-sakura-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:border-sakura-400">
-                                    <input id="fanMsgInput" type="text" required placeholder="Write something sweet for Đạo Thành... 🍰🐱" 
-                                           class="sm:col-span-2 px-3.5 py-2.5 rounded-xl bg-sakura-50/70 dark:bg-slate-900 border border-sakura-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:border-sakura-400">
-                                </div>
-                                <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs sm:text-sm shadow-md hover:opacity-95 transition-all">
-                                    💖 Post Fan Note to Wall
-                                </button>
-                            </form>
-
-                            <!-- Fan Messages Feed -->
-                            <div id="fanNotesList" class="space-y-3 max-h-64 overflow-y-auto pr-1">
-                                <!-- Rendered by JS -->
-                            </div>
-                        </div>
-
-                        <div class="mt-5 pt-4 border-t border-sakura-100 dark:border-slate-700 text-xs text-slate-500 flex items-center justify-between">
-                            <span>🏳️‍🌈 Safe, positive & adorable fan space</span>
-                            <span id="fanNotesCount" class="font-bold text-lilac-500">4 Fan Notes</span>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- SOCIALS & CONNECT SECTION -->
-        <section id="socials" class="py-14 sm:py-20 relative overflow-hidden">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-gradient-to-r from-sakura-500 via-lilac-500 to-sky-500 rounded-[36px] p-1 shadow-2xl">
-                    <div class="bg-white dark:bg-slate-900 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden">
-                        
-                        <span class="px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-sakura-100 dark:bg-sakura-950 text-sakura-600 dark:text-sakura-300">
-                            📱 Official Social Accounts
-                        </span>
-                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl mt-3">
-                            Follow <span class="bg-gradient-to-r from-sakura-500 to-lilac-500 bg-clip-text text-transparent">Nguyễn Đạo Thành</span> 💖
-                        </h2>
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto mt-2">
-                            Don't miss a single story, cute outfit check, CUHK campus life update, or cat photo! Connect with Thành on Instagram and Facebook.
-                        </p>
-
-                        <!-- Social Cards Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 max-w-3xl mx-auto">
-                            
-                            <!-- Instagram Card -->
-                            <div class="p-6 rounded-3xl bg-gradient-to-br from-pink-50 via-purple-50 to-amber-50 dark:from-slate-800 dark:to-slate-800 border-2 border-pink-200 dark:border-slate-700 flex flex-col justify-between text-left hover:scale-[1.02] transition-transform shadow-md">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-pink-500 to-purple-600 text-white flex items-center justify-center text-3xl shadow-md">
-                                        <i class="ph-fill ph-instagram-logo"></i>
-                                    </div>
-                                    <span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-300">
-                                        MAIN IG ✨
-                                    </span>
-                                </div>
-                                <div class="my-5">
-                                    <div class="text-xs font-bold text-slate-400 uppercase">Instagram Handle</div>
-                                    <div class="font-display font-extrabold text-2xl text-slate-800 dark:text-white mt-0.5">
-                                        @iamfinethanhyou
-                                    </div>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                        Daily stories, cute selfies, sweet food adventures & campus life at CUHK!
-                                    </p>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" rel="noopener noreferrer" 
-                                       class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs sm:text-sm text-center shadow-md hover:opacity-95 transition-opacity">
-                                        Open Instagram ↗
-                                    </a>
-                                    <button onclick="copyText('iamfinethanhyou', 'Instagram handle @iamfinethanhyou copied!')" 
-                                            class="p-3 rounded-xl bg-white dark:bg-slate-700 border border-pink-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:text-pink-500" title="Copy IG Handle">
-                                        <i class="ph-bold ph-copy text-base"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Facebook Card -->
-                            <div class="p-6 rounded-3xl bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 border-2 border-sky-200 dark:border-slate-700 flex flex-col justify-between text-left hover:scale-[1.02] transition-transform shadow-md">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 text-white flex items-center justify-center text-3xl shadow-md">
-                                        <i class="ph-fill ph-facebook-logo"></i>
-                                    </div>
-                                    <span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-300">
-                                        OFFICIAL FB 💙
-                                    </span>
-                                </div>
-                                <div class="my-5">
-                                    <div class="text-xs font-bold text-slate-400 uppercase">Facebook Profile</div>
-                                    <div class="font-display font-extrabold text-2xl text-slate-800 dark:text-white mt-0.5">
-                                        Dao Thanh
-                                    </div>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                        Connect with Nguyễn Đạo Thành on Facebook for updates, friends & college memories!
-                                    </p>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <a href="https://www.facebook.com/search/top/?q=Dao%20Thanh" target="_blank" rel="noopener noreferrer" 
-                                       class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold text-xs sm:text-sm text-center shadow-md hover:opacity-95 transition-opacity">
-                                        Find on Facebook ↗
-                                    </a>
-                                    <button onclick="copyText('Dao Thanh', 'Facebook name Dao Thanh copied!')" 
-                                            class="p-3 rounded-xl bg-white dark:bg-slate-700 border border-sky-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:text-blue-500" title="Copy Facebook Name">
-                                        <i class="ph-bold ph-copy text-base"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-sakura-200/70 dark:border-slate-800 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            <div class="flex items-center gap-2">
-                <span class="text-lg">🌸🐱🍰</span>
-                <span>Made with endless love for <strong>Nguyễn Đạo Thành</strong> • CUHK IBBA • CW Chu College</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <button onclick="openGithubModal()" class="hover:text-sakura-500 underline font-semibold">
-                    GitHub Photo Auto-Loader
-                </button>
-                <span>•</span>
-                <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" rel="noopener noreferrer" class="hover:text-sakura-500 font-semibold">
-                    @iamfinethanhyou
-                </a>
-            </div>
-        </div>
+    <footer class="mt-12 border-t border-sakura-200/60 dark:border-slate-800 py-6 text-center text-xs text-slate-500">
+        Made with 💖 for <strong>Nguyễn Đạo Thành</strong> • CUHK IBBA • CW Chu College • <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" class="text-sakura-500 font-bold hover:underline">@iamfinethanhyou</a>
     </footer>
 
     <!-- ===================================================================== -->
-    <!-- MODAL 1: EASY GITHUB PHOTO AUTO-SYNC WIZARD & CONFIG                  -->
+    <!-- VERCEL SERVER-SIDE SETUP MODAL (EASY COPY-PASTE GUIDE)                -->
     <!-- ===================================================================== -->
-    <div id="githubModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div id="vercelModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-sakura-200 dark:border-slate-700 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-4 border-b border-sakura-100 dark:border-slate-800">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center text-xl">
-                        <i class="ph-fill ph-github-logo"></i>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center font-bold">
+                        ▲
                     </div>
                     <div>
-                        <h3 class="font-display font-bold text-lg sm:text-xl">Automatic GitHub Photo Sync</h3>
-                        <p class="text-xs text-slate-500">Drop photos into your GitHub repo & they show up automatically!</p>
+                        <h3 class="font-display font-bold text-lg">How to Host Server-Side on Vercel</h3>
+                        <p class="text-xs text-slate-500">Zero server maintenance — works just like your regular Vercel workflow!</p>
                     </div>
                 </div>
-                <button onclick="closeGithubModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i class="ph-bold ph-x text-lg"></i>
+                <button onclick="closeVercelModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i class="ph-bold ph-x"></i>
                 </button>
             </div>
 
-            <div class="space-y-5 my-5 text-xs sm:text-sm">
-                <!-- How It Works Steps -->
-                <div class="p-4 rounded-2xl bg-sakura-50/80 dark:bg-slate-800/80 border border-sakura-200 dark:border-slate-700 space-y-2">
-                    <div class="font-bold text-sakura-600 dark:text-sakura-300 flex items-center gap-1.5">
-                        <i class="ph-fill ph-magic-wand"></i> How Automatic GitHub Folder Sync Works:
+            <div class="space-y-4 my-5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                <div class="p-4 rounded-2xl bg-sakura-50/70 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 space-y-2">
+                    <div class="font-bold text-sakura-600 dark:text-sakura-300">
+                        ✨ 3-Step Vercel Serverless Setup (Auto-Reads `/photos` Folder):
                     </div>
-                    <ol class="list-decimal list-inside space-y-1.5 text-slate-700 dark:text-slate-300">
-                        <li>Create a folder named <code class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 font-mono font-bold text-sakura-600">photos</code> inside your GitHub repository.</li>
-                        <li>Upload any of Đạo Thành's photos (<code class="font-mono">.jpg</code>, <code class="font-mono">.png</code>, <code class="font-mono">.webp</code>, <code class="font-mono">.gif</code>) into that <code class="font-mono font-bold">photos/</code> folder on GitHub.</li>
-                        <li><strong>Tip for Captions:</strong> Name the file like <code class="font-mono text-lilac-600 dark:text-lilac-300">Sweet_Boba_At_CUHK.jpg</code> and the website automatically turns the filename into a cute caption!</li>
-                        <li>When hosted on <strong>GitHub Pages</strong> (<code class="font-mono">username.github.io/repo</code>), this website <strong>automatically detects your repo</strong> and fetches every image in <code class="font-mono">photos/</code>!</li>
+                    <ol class="list-decimal list-inside space-y-1.5">
+                        <li>In your GitHub repo connected to Vercel, create a <code class="font-mono font-bold text-sakura-600">photos/</code> folder and drop <code class="font-mono font-bold">IMG_6962.JPG</code> (and any new photos) inside it.</li>
+                        <li>Create a file named <code class="font-mono font-bold text-lilac-600">api/photos.js</code> in your project with the 12-line serverless code below.</li>
+                        <li>Push to GitHub! Vercel automatically runs <code class="font-mono">/api/photos</code> on the server, scans your <code class="font-mono">photos/</code> folder, and displays every image on the website automatically.</li>
                     </ol>
                 </div>
 
-                <!-- Live GitHub Repository Connection Form -->
-                <div class="space-y-3">
-                    <label class="block font-bold text-slate-700 dark:text-slate-200">
-                        🔗 Connect Your GitHub Repository (Optional if not yet on GitHub Pages):
-                    </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase">GitHub Username</span>
-                            <input id="ghOwnerInput" type="text" placeholder="e.g. daothanh-fan" 
-                                   class="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs">
-                        </div>
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase">Repository Name</span>
-                            <input id="ghRepoInput" type="text" placeholder="e.g. daothanh-web" 
-                                   class="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs">
-                        </div>
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase">Folder Path</span>
-                            <input id="ghPathInput" type="text" value="photos" placeholder="photos" 
-                                   class="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs">
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 pt-1">
-                        <button onclick="saveAndSyncGithub()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs shadow-md hover:opacity-95">
-                            🔄 Save & Fetch Photos from GitHub Now
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="font-bold text-xs uppercase text-slate-400">File 1: api/photos.js (Vercel Serverless Function)</span>
+                        <button onclick="copyText(document.getElementById('vercelCodeSnippet').innerText, 'Copied api/photos.js code!')" class="text-xs font-bold text-sakura-500 hover:underline">
+                            Copy Code
                         </button>
-                        <span id="ghSyncResultMsg" class="text-xs font-semibold text-slate-500"></span>
                     </div>
-                </div>
+                    <pre id="vercelCodeSnippet" class="p-4 rounded-2xl bg-slate-900 text-emerald-300 font-mono text-[11px] overflow-x-auto">const fs = require('fs');
+const path = require('path');
 
-                <!-- Permanent Code Snippet Helper -->
-                <div class="p-4 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs space-y-1.5">
-                    <div class="text-sakura-300 font-sans font-bold text-xs">
-                        💡 Or edit <code class="text-white">GITHUB_CONFIG</code> right inside <code class="text-white">index.html</code> (Line ~695):
-                    </div>
-                    <pre class="overflow-x-auto text-[11px] text-emerald-300">const GITHUB_CONFIG = {
-  owner: "YOUR_GITHUB_USERNAME", // Auto-detected on GitHub Pages!
-  repo: "YOUR_REPO_NAME",        // Auto-detected on GitHub Pages!
-  folder: "photos"               // Drop any image in /photos folder!
+module.exports = (req, res) => {
+  const photosDir = path.join(process.cwd(), 'photos');
+  if (!fs.existsSync(photosDir)) return res.json({ photos: [] });
+
+  const files = fs.readdirSync(photosDir)
+    .filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f));
+
+  const photos = files.map((file, i) => ({
+    id: `srv-${i}`,
+    url: `/photos/${file}`,
+    caption: file.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ') + ' ✨',
+    rarity: 'SSR ★ VERCEL'
+  }));
+
+  res.status(200).json({ photos });
 };</pre>
                 </div>
             </div>
 
             <div class="flex justify-end pt-3 border-t border-sakura-100 dark:border-slate-800">
-                <button onclick="closeGithubModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">
-                    Close Window
+                <button onclick="closeVercelModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">
+                    Got It!
                 </button>
             </div>
         </div>
     </div>
 
     <!-- ===================================================================== -->
-    <!-- MODAL 2: ADD / UPLOAD PHOTO PREVIEW & EASY CONFIG GENERATOR           -->
+    <!-- ADD / PREVIEW PHOTO MODAL                                             -->
     <!-- ===================================================================== -->
     <div id="uploadPhotoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-sakura-200 dark:border-slate-700 shadow-2xl">
-            <div class="flex items-center justify-between pb-4 border-b border-sakura-100 dark:border-slate-800">
-                <h3 class="font-display font-bold text-lg sm:text-xl">📸 Add New Photocard</h3>
-                <button onclick="closeUploadPhotoModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i class="ph-bold ph-x text-lg"></i>
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-sakura-200 dark:border-slate-700 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-sakura-100 dark:border-slate-800">
+                <h3 class="font-display font-bold text-lg">📸 Add / Preview Photo</h3>
+                <button onclick="closeUploadPhotoModal()" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i class="ph-bold ph-x"></i>
                 </button>
             </div>
-
-            <form onsubmit="handleAddCustomPhoto(event)" class="space-y-4 my-5 text-xs sm:text-sm">
+            <form onsubmit="handleAddCustomPhoto(event)" class="space-y-3.5 mt-4 text-xs sm:text-sm">
                 <div>
-                    <label class="block font-bold mb-1">Photo URL or Relative GitHub Path</label>
-                    <input id="newPhotoUrl" type="text" required placeholder="e.g. photos/thanh1.jpg or https://..." 
-                           class="w-full px-3.5 py-2.5 rounded-xl bg-sakura-50/60 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700">
-                    <p class="text-[11px] text-slate-400 mt-1">
-                        Tip: You can also pick a local image file below to preview it immediately!
-                    </p>
+                    <label class="block font-bold mb-1">Select Photo from Device</label>
+                    <input type="file" accept="image/*" onchange="handleLocalFileSelect(event)"
+                           class="w-full text-xs file:mr-3 file:py-2 file:px-3.5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-sakura-100 file:text-sakura-700">
                 </div>
-
                 <div>
-                    <label class="block font-bold mb-1">Or Select Local Photo to Preview</label>
-                    <input id="localFileInput" type="file" accept="image/*" onchange="handleLocalFileSelect(event)"
-                           class="w-full text-xs file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-sakura-100 file:text-sakura-700 hover:file:bg-sakura-200">
+                    <label class="block font-bold mb-1">Or Image Path / URL</label>
+                    <input id="newPhotoUrl" type="text" required placeholder="photos/IMG_6962.JPG or https://..."
+                           class="w-full px-3.5 py-2 rounded-xl bg-sakura-50/60 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700">
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold mb-1">Card Caption / Title</label>
-                        <input id="newPhotoCaption" type="text" required placeholder="e.g. Sweet dessert date at CUHK 🍰" 
-                               class="w-full px-3.5 py-2.5 rounded-xl bg-sakura-50/60 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700">
-                    </div>
-                    <div>
-                        <label class="block font-bold mb-1">Category Tag</label>
-                        <select id="newPhotoCategory" class="w-full px-3.5 py-2.5 rounded-xl bg-sakura-50/60 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700">
-                            <option value="femboy">🎀 Cute & Femboy</option>
-                            <option value="cuhk">🎓 CUHK & CW Chu</option>
-                            <option value="sweets_cats">🍰🐱 Sweets & Cats</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block font-bold mb-1">Caption</label>
+                    <input id="newPhotoCaption" type="text" required placeholder="Escalator Fit Check 🎀✨"
+                           class="w-full px-3.5 py-2 rounded-xl bg-sakura-50/60 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700">
                 </div>
-
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeUploadPhotoModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs shadow-md">
-                        ✨ Add Photocard to Gallery
-                    </button>
+                    <button type="button" onclick="closeUploadPhotoModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs">Add to Gallery</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- MODAL 3: FULLSCREEN PHOTOCARD LIGHTBOX VIEWER                         -->
-    <!-- ===================================================================== -->
-    <div id="lightboxModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="closeLightbox(event)">
-        <div class="max-w-md w-full bg-white dark:bg-slate-900 p-4 rounded-[32px] border-2 border-sakura-300 dark:border-slate-700 shadow-2xl relative" onclick="event.stopPropagation()">
-            <button onclick="closeLightbox()" class="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-sakura-500 text-white flex items-center justify-center shadow-lg">
-                <i class="ph-bold ph-x"></i>
-            </button>
-            <div class="aspect-[4/5] w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
-                <img id="lightboxImg" src="" alt="Photocard Fullscreen" class="w-full h-full object-cover">
-            </div>
-            <div class="mt-3 px-2 flex items-center justify-between">
-                <div>
-                    <span id="lightboxBadge" class="text-[11px] font-extrabold uppercase text-sakura-500">SSR PHOTOCARD</span>
-                    <h4 id="lightboxCaption" class="font-display font-bold text-base sm:text-lg"></h4>
-                </div>
-                <button onclick="triggerFanCheer(event)" class="px-3.5 py-2 rounded-full bg-sakura-100 dark:bg-slate-800 text-sakura-600 dark:text-sakura-300 font-bold text-xs flex items-center gap-1">
-                    <i class="ph-fill ph-heart"></i> Love Card
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Custom Toast Notification Box (No alert() used!) -->
+    <!-- Toast Notification -->
     <div id="toastBox" class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
-        <div class="bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 px-4 py-3 rounded-2xl shadow-xl border border-sakura-400/40 flex items-center gap-2.5 text-xs sm:text-sm font-bold">
-            <span class="text-lg">✨</span>
-            <span id="toastMessage">Notification</span>
+        <div class="bg-slate-900 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2">
+            <span>✨</span>
+            <span id="toastMessage">Saved!</span>
         </div>
     </div>
 
     <script>
         /**
-         * ============================================================================
-         * 🌸 EASY PHOTO CONFIGURATION FOR NGUYỄN ĐẠO THÀNH'S WEBSITE 🌸
-         * ============================================================================
-         * HOW TO AUTOMATICALLY SHOW PHOTOS FROM GITHUB:
-         * 
-         * Method A (Zero-Code Automatic GitHub Folder):
-         *   1. Create a folder named `photos` in your GitHub repository.
-         *   2. Upload any images (.jpg, .png, .webp, .gif) into `photos/`.
-         *   3. If hosted on GitHub Pages (e.g. username.github.io/repo), this script
-         *      auto-detects your username & repo, queries the GitHub API, and displays
-         *      all photos inside `photos/` automatically!
-         *   4. Or fill in `owner` and `repo` below once.
-         * 
-         * Method B (Simple Manual List):
-         *   Add image filenames or URLs to `MANUAL_PHOTOS` below!
-         * ============================================================================
+         * =========================================================================
+         * 1. THREE.JS 3D MODEL OF NGUYỄN ĐẠO THÀNH (BASED ON IMG_6962.JPG)
+         * =========================================================================
+         * Recreates his exact outfit from the mall escalator photo:
+         * - Pink & white horizontal striped long-sleeve crop top
+         * - Pink choker with a silver heart charm in the center
+         * - Black backpack with front shoulder straps
+         * - Black pleated mini skirt + subtle midriff gap
+         * - Black thigh-high socks + white sneakers with pink cat-ear tongues
+         * - Parted brown hair with blonde front highlights
+         * - Standing on a moving mall escalator with glass handrail & pink cat sticker
          */
-        const GITHUB_CONFIG = {
-            owner: "",          // Leave blank for auto-detection on GitHub Pages, or put your GitHub username e.g. "iamfinethanhyou"
-            repo: "",           // Leave blank for auto-detection on GitHub Pages, or put your repo name e.g. "daothanh"
-            folder: "photos",   // Folder in your GitHub repo where you upload his photos
-            branch: "main"      // Optional branch name (tries default branch automatically)
-        };
+        let scene, camera, renderer, characterGroup, escalatorSteps = [];
+        let autoSpin = true;
+        let isDragging = false;
+        let prevMouseX = 0;
+        let jumpVelocity = 0;
+        let jumpOffset = 0;
 
-        // Starter / Fallback Photocards (Always shown alongside any photos uploaded to GitHub /photos!)
+        function createStripedCropTopTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            const stripeCount = 14;
+            const stripeHeight = canvas.height / stripeCount;
+            for (let i = 0; i < stripeCount; i++) {
+                ctx.fillStyle = i % 2 === 0 ? '#ffc2d4' : '#ffffff';
+                ctx.fillRect(0, i * stripeHeight, canvas.width, stripeHeight);
+            }
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            return tex;
+        }
+
+        function init3DModel() {
+            const container = document.getElementById('threeCanvasContainer');
+            if (!container || typeof THREE === 'undefined') return;
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 1.35, 4.9);
+            camera.lookAt(0, 0.95, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Soft Studio & Mall Lighting
+            const ambientLight = new THREE.AmbientLight(0xfff5f8, 0.85);
+            scene.add(ambientLight);
+
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.85);
+            mainLight.position.set(3, 6, 4);
+            mainLight.castShadow = true;
+            scene.add(mainLight);
+
+            const rimLight = new THREE.DirectionalLight(0xff85b3, 0.45);
+            rimLight.position.set(-4, 3, -3);
+            scene.add(rimLight);
+
+            // Root Group for easy 360 rotation
+            const rootGroup = new THREE.Group();
+            scene.add(rootGroup);
+
+            // --- ESCALATOR BASE & HANDRAIL ---
+            const escalatorGroup = new THREE.Group();
+            rootGroup.add(escalatorGroup);
+
+            const stepMat = new THREE.MeshStandardMaterial({ color: 0x3b3f46, metalness: 0.6, roughness: 0.4 });
+            for (let i = -2; i <= 2; i++) {
+                const stepGeo = new THREE.BoxGeometry(1.7, 0.12, 0.42);
+                const step = new THREE.Mesh(stepGeo, stepMat);
+                step.position.set(0, -0.06 - i * 0.06, i * 0.35);
+                step.receiveShadow = true;
+                escalatorGroup.add(step);
+                escalatorSteps.push(step);
+            }
+
+            // Glass side balustrade (left side from viewer, right hand side of Thành)
+            const glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0xdbeafe,
+                transparent: true,
+                opacity: 0.42,
+                roughness: 0.1
+            });
+            const glassPanel = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.05, 1.8), glassMat);
+            glassPanel.position.set(-0.82, 0.48, 0);
+            escalatorGroup.add(glassPanel);
+
+            // Black Escalator Handrail
+            const railMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.3 });
+            const handrail = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 1.88), railMat);
+            handrail.position.set(-0.82, 1.02, 0);
+            escalatorGroup.add(handrail);
+
+            // Cute Pink Cat Sticker on the glass balustrade (just like in IMG_6962.JPG!)
+            const catSticker = new THREE.Mesh(
+                new THREE.CircleGeometry(0.11, 24),
+                new THREE.MeshBasicMaterial({ color: 0xff85a2, side: THREE.DoubleSide })
+            );
+            catSticker.position.set(-0.78, 0.68, 0.42);
+            catSticker.rotation.y = Math.PI / 2;
+            escalatorGroup.add(catSticker);
+
+            // --- CHARACTER: NGUYỄN ĐẠO THÀNH ---
+            characterGroup = new THREE.Group();
+            rootGroup.add(characterGroup);
+
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdfd1, roughness: 0.55 });
+            const sockMat = new THREE.MeshStandardMaterial({ color: 0x141418, roughness: 0.7 });
+            const shoeMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35 });
+            const pinkMat = new THREE.MeshStandardMaterial({ color: 0xff9ebb, roughness: 0.4 });
+            const stripeTopMat = new THREE.MeshStandardMaterial({
+                map: createStripedCropTopTexture(),
+                roughness: 0.6
+            });
+
+            // 1. White Sneakers with Pink Cat-Face Tongues
+            [-0.17, 0.17].forEach(xPos => {
+                const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.13, 0.34), shoeMat);
+                shoe.position.set(xPos, 0.07, 0.05);
+                characterGroup.add(shoe);
+
+                // Cute pink cat tongue accent on sneaker
+                const catTongue = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.04), pinkMat);
+                catTongue.position.set(xPos, 0.15, 0.12);
+                characterGroup.add(catTongue);
+
+                // Black Thigh-High Socks
+                const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.082, 0.068, 0.54, 20), sockMat);
+                sock.position.set(xPos, 0.38, 0);
+                characterGroup.add(sock);
+
+                // Upper Thigh Skin (Absolute Territory gap above thigh-highs)
+                const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.084, 0.16, 20), skinMat);
+                thigh.position.set(xPos, 0.71, 0);
+                characterGroup.add(thigh);
+            });
+
+            // 2. Black Pleated Mini Skirt
+            const skirtGroup = new THREE.Group();
+            skirtGroup.position.set(0, 0.88, 0);
+            characterGroup.add(skirtGroup);
+
+            const skirtBase = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.33, 0.34, 24), sockMat);
+            skirtGroup.add(skirtBase);
+
+            // Individual Pleats around the skirt
+            const pleatCount = 16;
+            for (let i = 0; i < pleatCount; i++) {
+                const angle = (i / pleatCount) * Math.PI * 2;
+                const pleat = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.33, 0.05), sockMat);
+                pleat.position.set(Math.cos(angle) * 0.26, -0.01, Math.sin(angle) * 0.26);
+                pleat.rotation.y = -angle;
+                pleat.rotation.z = 0.22;
+                skirtGroup.add(pleat);
+            }
+
+            // 3. Subtle Midriff Waist
+            const midriff = new THREE.Mesh(new THREE.CylinderGeometry(0.185, 0.195, 0.11, 20), skinMat);
+            midriff.position.set(0, 1.08, 0);
+            characterGroup.add(midriff);
+
+            // 4. Pink & White Horizontal Striped Crop Top
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.20, 0.42, 24), stripeTopMat);
+            torso.position.set(0, 1.33, 0);
+            characterGroup.add(torso);
+
+            // Pink crew-neck collar trim
+            const collarTrim = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.022, 12, 28), pinkMat);
+            collarTrim.position.set(0, 1.54, 0);
+            collarTrim.rotation.x = Math.PI / 2;
+            characterGroup.add(collarTrim);
+
+            // 5. Black Backpack & Shoulder Straps
+            const backpackMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.7 });
+            const backpack = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.42, 0.18), backpackMat);
+            backpack.position.set(0, 1.32, -0.22);
+            characterGroup.add(backpack);
+
+            [-0.16, 0.16].forEach(xPos => {
+                const strap = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.43, 0.24), backpackMat);
+                strap.position.set(xPos, 1.34, 0.01);
+                characterGroup.add(strap);
+            });
+
+            // 6. Long Striped Sleeves & Hands (Right arm resting on the escalator handrail!)
+            // Right arm (viewer's left, reaching to the handrail)
+            const rightSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.48, 16), stripeTopMat);
+            rightSleeve.position.set(-0.38, 1.28, 0.05);
+            rightSleeve.rotation.z = -0.68;
+            characterGroup.add(rightSleeve);
+
+            const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), skinMat);
+            rightHand.position.set(-0.56, 1.09, 0.08);
+            characterGroup.add(rightHand);
+
+            // Left arm (viewer's right, relaxed by the skirt)
+            const leftSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.48, 16), stripeTopMat);
+            leftSleeve.position.set(0.28, 1.24, 0);
+            leftSleeve.rotation.z = 0.16;
+            characterGroup.add(leftSleeve);
+
+            const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.058, 16, 16), skinMat);
+            leftHand.position.set(0.32, 0.99, 0.02);
+            characterGroup.add(leftHand);
+
+            // 7. Neck + Pink Heart Choker
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.095, 0.15, 20), skinMat);
+            neck.position.set(0, 1.60, 0);
+            characterGroup.add(neck);
+
+            const chokerBand = new THREE.Mesh(new THREE.TorusGeometry(0.092, 0.018, 12, 28), pinkMat);
+            chokerBand.position.set(0, 1.60, 0);
+            chokerBand.rotation.x = Math.PI / 2;
+            characterGroup.add(chokerBand);
+
+            const silverMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.2 });
+            const heartRing = new THREE.Mesh(new THREE.TorusGeometry(0.028, 0.007, 10, 20), silverMat);
+            heartRing.position.set(0, 1.60, 0.105);
+            characterGroup.add(heartRing);
+
+            // 8. Cute Head, Blush, Eyes & Parted Hair with Blonde Highlights
+            const headGroup = new THREE.Group();
+            headGroup.position.set(0, 1.86, 0);
+            characterGroup.add(headGroup);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 28, 28), skinMat);
+            head.scale.set(0.95, 1.02, 0.95);
+            headGroup.add(head);
+
+            // Eyes
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1e1b18 });
+            [-0.08, 0.08].forEach(xPos => {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.024, 14, 14), eyeMat);
+                eye.position.set(xPos, 0.01, 0.215);
+                headGroup.add(eye);
+            });
+
+            // Rosy Cheek Blush
+            const blushMat = new THREE.MeshBasicMaterial({ color: 0xff8da1, transparent: true, opacity: 0.55 });
+            [-0.13, 0.13].forEach(xPos => {
+                const blush = new THREE.Mesh(new THREE.CircleGeometry(0.032, 16), blushMat);
+                blush.position.set(xPos, -0.04, 0.22);
+                headGroup.add(blush);
+            });
+
+            // Hair Cap (Dark Chestnut Brown)
+            const brownHairMat = new THREE.MeshStandardMaterial({ color: 0x3d281d, roughness: 0.65 });
+            const blondeHairMat = new THREE.MeshStandardMaterial({ color: 0xd4a359, roughness: 0.55 });
+
+            const hairCap = new THREE.Mesh(new THREE.SphereGeometry(0.255, 24, 24, 0, Math.PI * 2, 0, Math.PI * 0.58), brownHairMat);
+            hairCap.position.y = 0.02;
+            headGroup.add(hairCap);
+
+            // Blonde Highlighted Front Bangs (Viewer's left / Thành's right side, matching photo)
+            const blondeBang1 = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 12), blondeHairMat);
+            blondeBang1.position.set(-0.09, 0.11, 0.19);
+            blondeBang1.rotation.z = 0.35;
+            blondeBang1.rotation.x = 0.35;
+            headGroup.add(blondeBang1);
+
+            const blondeBang2 = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.22, 12), blondeHairMat);
+            blondeBang2.position.set(-0.02, 0.12, 0.21);
+            blondeBang2.rotation.z = 0.15;
+            blondeBang2.rotation.x = 0.4;
+            headGroup.add(blondeBang2);
+
+            // Brown Front Bangs (Right side)
+            const brownBang = new THREE.Mesh(new THREE.ConeGeometry(0.095, 0.24, 12), brownHairMat);
+            brownBang.position.set(0.10, 0.11, 0.19);
+            brownBang.rotation.z = -0.35;
+            brownBang.rotation.x = 0.35;
+            headGroup.add(brownBang);
+
+            // Interactive Mouse & Touch Drag Rotation
+            const domEl = renderer.domElement;
+            domEl.addEventListener('mousedown', e => { isDragging = true; prevMouseX = e.clientX; });
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                const delta = e.clientX - prevMouseX;
+                rootGroup.rotation.y += delta * 0.012;
+                prevMouseX = e.clientX;
+            });
+
+            domEl.addEventListener('touchstart', e => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    prevMouseX = e.touches[0].clientX;
+                }
+            }, { passive: true });
+            window.addEventListener('touchend', () => { isDragging = false; });
+            window.addEventListener('touchmove', e => {
+                if (!isDragging || e.touches.length !== 1) return;
+                const delta = e.touches[0].clientX - prevMouseX;
+                rootGroup.rotation.y += delta * 0.012;
+                prevMouseX = e.touches[0].clientX;
+            }, { passive: true });
+
+            // Handle Responsive Resize
+            window.addEventListener('resize', () => {
+                if (!container) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // Animation Loop
+            let clock = new THREE.Clock();
+            function animate() {
+                requestAnimationFrame(animate);
+                const t = clock.getElapsedTime();
+
+                if (autoSpin && !isDragging) {
+                    rootGroup.rotation.y = Math.sin(t * 0.55) * 0.45;
+                }
+
+                // Jump / Pose Physics
+                if (jumpOffset > 0 || jumpVelocity !== 0) {
+                    jumpOffset += jumpVelocity;
+                    jumpVelocity -= 0.008;
+                    if (jumpOffset <= 0) {
+                        jumpOffset = 0;
+                        jumpVelocity = 0;
+                    }
+                }
+
+                // Gentle breathing & bobbing
+                characterGroup.position.y = Math.sin(t * 2.5) * 0.02 + jumpOffset;
+                headGroup.rotation.z = Math.sin(t * 1.8) * 0.04;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        function trigger3DJump() {
+            jumpVelocity = 0.11;
+            triggerFanCheer();
+            showToast("✨ Đạo Thành struck an escalator pose!");
+        }
+
+        function toggleAutoSpin() {
+            autoSpin = !autoSpin;
+            document.getElementById('spinToggleBtn').textContent = autoSpin ? "⟳ Spin: ON" : "⟳ Spin: OFF";
+        }
+
+        /**
+         * =========================================================================
+         * 2. SERVER-SIDE VERCEL API + GITHUB AUTO-SYNC PHOTO LOADER
+         * =========================================================================
+         */
         const DEFAULT_PHOTOCARDS = [
             {
-                id: "ndt-1",
-                url: "photos/1.jpg", // Automatically works if you upload photos/1.jpg to your repo!
+                id: "ndt-escalator",
+                url: "photos/IMG_6962.JPG",
                 fallbackUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80",
-                caption: "CW Chu College's Cutest Cat Whisperer 🐱🐾",
-                category: "sweets_cats",
-                rarity: "SSR ★ VISUAL",
-                date: "CW Chu College"
+                caption: "Signature Striped Crop Top, Heart Choker & Pleated Skirt Fit 🎀✨",
+                rarity: "UR ★ ICONIC FIT"
+            },
+            {
+                id: "ndt-1",
+                url: "photos/1.jpg",
+                fallbackUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
+                caption: "Sweet Tooth Energy: Strawberry Cake & Boba Date 🍰🍓",
+                rarity: "SSR ★ SWEETIE"
             },
             {
                 id: "ndt-2",
-                url: "photos/2.jpg", // Automatically works if you upload photos/2.jpg to your repo!
-                fallbackUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
-                caption: "Sweet Tooth Energy: Strawberry Shortcake & Boba Time 🍰🍓",
-                category: "sweets_cats",
-                rarity: "SSR ★ SWEETIE",
-                date: "Dessert Date"
+                url: "photos/2.jpg",
+                fallbackUrl: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=800&q=80",
+                caption: "CW Chu College's Cutest Cat Whisperer 🐱🐾",
+                rarity: "SSR ★ CAT BOY"
             },
             {
                 id: "ndt-3",
-                url: "photos/3.jpg", // Automatically works if you upload photos/3.jpg to your repo!
-                fallbackUrl: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=800&q=80",
-                caption: "Pastel Femboy Vibes & Cozy Hoodie Season 🎀🌸",
-                category: "femboy",
-                rarity: "UR ★ ICONIC",
-                date: "OOTD Check"
-            },
-            {
-                id: "ndt-4",
-                url: "photos/4.jpg", // Automatically works if you upload photos/4.jpg to your repo!
+                url: "photos/3.jpg",
                 fallbackUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80",
                 caption: "CUHK IBBA Future CEO Between Lectures 🎓💼",
-                category: "cuhk",
-                rarity: "SSR ★ SCHOLAR",
-                date: "CUHK Campus"
-            },
-            {
-                id: "ndt-5",
-                url: "photos/5.jpg",
-                fallbackUrl: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80",
-                caption: "Late Night Ice Cream & Parfait Cravings 🍨✨",
-                category: "sweets_cats",
-                rarity: "SR ★ YUMMY",
-                date: "Sweet Treats"
-            },
-            {
-                id: "ndt-6",
-                url: "photos/6.jpg",
-                fallbackUrl: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=800&q=80",
-                caption: "Certified Pride & Cutie Pie @iamfinethanhyou 🏳️‍🌈💖",
-                category: "femboy",
-                rarity: "UR ★ CENTER",
-                date: "08.12.2008"
+                rarity: "SSR ★ CUHK"
             }
         ];
 
-        // Application State
         let allPhotocards = [];
-        let activeFilter = 'all';
-        let heroCardIndex = 0;
         let heartCount = parseInt(localStorage.getItem('ndt_hearts') || '2812', 10);
-        let treatCount = parseInt(localStorage.getItem('ndt_treats') || '428', 10);
-        let useDayMonthFormat = true; // True = 8 Dec 2008 (DD/MM/YYYY), False = Aug 12 2008 (MM/DD/YYYY)
 
-        // Default Fan Notes
-        const defaultFanNotes = [
-            { name: "CW Chu Neighbor 🏡", msg: "Thành is literally the sweetest person in CW Chu College!! Always sharing snacks 🍰💖", time: "2 hrs ago" },
-            { name: "CUHK IBBA Squad 🎓", msg: "Smartest and cutest femboy in our IBBA lectures!! Slay every presentation ✨💅", time: "5 hrs ago" },
-            { name: "Campus Kitty 🐾", msg: "Meow meow purr (Translation: Thank you for always petting the CUHK cats!) 🐱", time: "1 day ago" },
-            { name: "IG Stan @iamfinethanhyou 🌸", msg: "Happy early birthday 8/12/2008 king/princess!! Keep shining 🏳️‍🌈🎀", time: "2 days ago" }
-        ];
-
-        /**
-         * Automatically detects GitHub Pages repo or uses saved settings to scan `/photos` folder
-         */
-        async function loadPhotosFromGithub() {
-            // Load user-saved custom photos from localStorage
+        async function loadAllPhotos() {
             const savedCustom = JSON.parse(localStorage.getItem('ndt_custom_photos') || '[]');
-            
-            // Determine owner & repo (1. LocalStorage override, 2. GITHUB_CONFIG, 3. Auto-detect from *.github.io URL)
-            let owner = localStorage.getItem('ndt_gh_owner') || GITHUB_CONFIG.owner;
-            let repo = localStorage.getItem('ndt_gh_repo') || GITHUB_CONFIG.repo;
-            let folder = localStorage.getItem('ndt_gh_path') || GITHUB_CONFIG.folder || 'photos';
+            let serverPhotos = [];
 
-            if (!owner && window.location.hostname.endsWith('.github.io')) {
-                owner = window.location.hostname.split('.')[0];
-                const pathParts = window.location.pathname.split('/').filter(Boolean);
-                repo = pathParts.length > 0 ? pathParts[0] : `${owner}.github.io`;
-            }
-
-            // Populate modal inputs for convenience
-            document.getElementById('ghOwnerInput').value = owner;
-            document.getElementById('ghRepoInput').value = repo;
-            document.getElementById('ghPathInput').value = folder;
-
-            let githubPhotos = [];
-
-            if (owner && repo) {
-                try {
-                    const apiUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodeURIComponent(folder)}`;
-                    const response = await fetch(apiUrl);
-                    if (response.ok) {
-                        const files = await response.json();
-                        if (Array.isArray(files)) {
-                            const imageFiles = files.filter(f => /\.(jpe?g|png|webp|gif|avif)$/i.test(f.name));
-                            githubPhotos = imageFiles.map((file, idx) => {
-                                // Turn filename like "Cute_Outfit_CUHK.jpg" into "Cute Outfit CUHK"
-                                const rawName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]+/g, " ");
-                                const niceCaption = rawName.length > 2 
-                                    ? `${rawName} ✨` 
-                                    : `Nguyễn Đạo Thành Photocard #${idx + 1} 💖`;
-                                
-                                // Auto-categorize based on keywords in filename
-                                let cat = 'femboy';
-                                if (/cuhk|chu|college|uni|ibba/i.test(rawName)) cat = 'cuhk';
-                                if (/cat|kitty|sweet|cake|boba|food/i.test(rawName)) cat = 'sweets_cats';
-
-                                return {
-                                    id: `gh-${file.sha || idx}`,
-                                    url: file.download_url,
-                                    fallbackUrl: file.download_url,
-                                    caption: niceCaption,
-                                    category: cat,
-                                    rarity: idx % 2 === 0 ? "UR ★ GITHUB" : "SSR ★ OFFICIAL",
-                                    date: "GitHub Sync"
-                                };
-                            });
-
-                            const badge = document.getElementById('githubStatusBadge');
-                            if (badge && githubPhotos.length > 0) {
-                                badge.textContent = `Synced ${githubPhotos.length} GitHub Photos ✓`;
-                            }
-                        }
+            // 1. Try Vercel Serverless Function (/api/photos) first!
+            try {
+                const res = await fetch('/api/photos');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data.photos) && data.photos.length > 0) {
+                        serverPhotos = data.photos;
+                        document.getElementById('syncSourceBadge').textContent = `▲ Vercel Server (${serverPhotos.length})`;
                     }
-                } catch (err) {
-                    console.warn("GitHub folder auto-discovery note:", err);
                 }
+            } catch (e) {
+                // Fallback silently if running statically without /api/photos
             }
 
-            // Combine: GitHub auto-synced photos first, then custom added photos, then default showcase cards
-            allPhotocards = [...githubPhotos, ...savedCustom, ...DEFAULT_PHOTOCARDS];
+            // 2. If on GitHub Pages, also auto-scan /photos folder via GitHub API
+            if (serverPhotos.length === 0 && window.location.hostname.endsWith('.github.io')) {
+                try {
+                    const owner = window.location.hostname.split('.')[0];
+                    const repo = window.location.pathname.split('/').filter(Boolean)[0] || `${owner}.github.io`;
+                    const ghRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/photos`);
+                    if (ghRes.ok) {
+                        const files = await ghRes.json();
+                        serverPhotos = files
+                            .filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f.name))
+                            .map((f, i) => ({
+                                id: `gh-${i}`,
+                                url: f.download_url,
+                                fallbackUrl: f.download_url,
+                                caption: f.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ') + ' ✨',
+                                rarity: 'SSR ★ GITHUB'
+                            }));
+                    }
+                } catch (e) {}
+            }
+
+            allPhotocards = [...serverPhotos, ...savedCustom, ...DEFAULT_PHOTOCARDS];
             renderPhotocardGallery();
-            updateHeroCard(0);
         }
 
-        /**
-         * Renders the collectible holographic photocards into the responsive grid
-         */
         function renderPhotocardGallery() {
             const grid = document.getElementById('photocardGrid');
-            const filtered = activeFilter === 'all' 
-                ? allPhotocards 
-                : allPhotocards.filter(card => card.category === activeFilter);
-
-            document.getElementById('photoCountLabel').textContent = `Showing ${filtered.length} Collectible Photocards`;
-
-            grid.innerHTML = filtered.map((card, index) => {
-                const categoryBadge = card.category === 'cuhk'
-                    ? '🎓 CUHK & CW Chu'
-                    : card.category === 'sweets_cats'
-                        ? '🍰🐱 Sweets & Cats'
-                        : '🎀 Cute & Femboy';
-
-                return `
-                <article class="holo-card bg-white dark:bg-slate-800 p-3.5 rounded-[28px] border border-sakura-200/90 dark:border-slate-700 shadow-lg flex flex-col justify-between cursor-pointer group"
-                         onclick="openLightbox('${card.id}')">
+            grid.innerHTML = allPhotocards.map(card => `
+                <article class="holo-card bg-white dark:bg-slate-800 p-3 rounded-3xl border border-sakura-200/80 dark:border-slate-700 shadow-md flex flex-col justify-between">
                     <div>
-                        <!-- Top Card Metadata -->
-                        <div class="flex items-center justify-between px-1 mb-2.5">
+                        <div class="flex items-center justify-between px-1 mb-2">
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-sakura-400 to-lilac-500 text-white">
                                 ${card.rarity || 'SSR ★ IDOL'}
                             </span>
-                            <span class="text-[11px] font-bold text-slate-400">${card.date || 'Official'}</span>
+                            <span class="text-[11px] font-bold text-slate-400">08.12.2008</span>
                         </div>
-
-                        <!-- Photocard Image with automatic fallback if local photos/1.jpg isn't uploaded yet -->
-                        <div class="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-sakura-50 dark:bg-slate-900">
-                            <img src="${card.url}" 
+                        <div class="aspect-[4/5] w-full rounded-2xl overflow-hidden bg-sakura-50 dark:bg-slate-900">
+                            <img src="${card.url}"
                                  alt="${card.caption}"
                                  loading="lazy"
-                                 onerror="if (this.src !== '${card.fallbackUrl}') { this.src = '${card.fallbackUrl}'; } else { this.src = 'https://placehold.co/600x750/ffd0e2/e82368?text=Dao+Thanh+%E2%9C%A8'; }"
-                                 class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-                            
-                            <div class="absolute bottom-2.5 left-2.5 right-2.5 flex justify-between items-center">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/55 backdrop-blur-md text-white">
-                                    ${categoryBadge}
-                                </span>
-                                <span class="w-7 h-7 rounded-full bg-white/90 text-sakura-500 flex items-center justify-center shadow-sm">
-                                    <i class="ph-fill ph-magnifying-glass-plus text-xs"></i>
-                                </span>
-                            </div>
+                                 onerror="if (this.src !== '${card.fallbackUrl}') { this.src = '${card.fallbackUrl}'; }"
+                                 class="w-full h-full object-cover">
                         </div>
-
-                        <!-- Caption -->
-                        <p class="font-display font-bold text-sm text-slate-800 dark:text-slate-100 mt-3 px-1 line-clamp-2">
+                        <p class="font-display font-bold text-xs sm:text-sm mt-2.5 px-1 line-clamp-2">
                             ${card.caption}
                         </p>
                     </div>
-
-                    <!-- Card Bottom Footer -->
-                    <div class="mt-3 pt-2.5 border-t border-sakura-100/80 dark:border-slate-700/70 flex items-center justify-between px-1 text-xs">
+                    <div class="mt-2.5 pt-2 border-t border-sakura-100 dark:border-slate-700 flex items-center justify-between px-1 text-xs">
                         <span class="text-slate-400 font-semibold">Nguyễn Đạo Thành</span>
-                        <button onclick="event.stopPropagation(); triggerFanCheer(event);" class="text-sakura-500 hover:text-sakura-600 font-bold flex items-center gap-1">
-                            <i class="ph-fill ph-heart"></i> Stan
+                        <button onclick="triggerFanCheer(event)" class="text-sakura-500 font-bold flex items-center gap-1">
+                            <i class="ph-fill ph-heart"></i> Cheer
                         </button>
                     </div>
                 </article>
-                `;
-            }).join('');
+            `).join('');
         }
 
-        function filterGallery(category) {
-            activeFilter = category;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.dataset.filter === category) {
-                    btn.className = "filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-sakura-500 text-white shadow-sm transition-all";
-                } else {
-                    btn.className = "filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-sakura-200 dark:border-slate-700 hover:border-sakura-400 transition-all";
-                }
-            });
-            renderPhotocardGallery();
-        }
-
-        function updateHeroCard(index) {
-            if (!allPhotocards.length) return;
-            const card = allPhotocards[index % allPhotocards.length];
-            const imgEl = document.getElementById('heroMainImage');
-            const capEl = document.getElementById('heroMainCaption');
-            if (imgEl && card) {
-                imgEl.onerror = function() {
-                    if (this.src !== card.fallbackUrl && card.fallbackUrl) {
-                        this.src = card.fallbackUrl;
-                    }
-                };
-                imgEl.src = card.url;
-                capEl.textContent = `" ${card.caption} "`;
-            }
-        }
-
-        function cycleHeroPhoto() {
-            heroCardIndex = (heroCardIndex + 1) % allPhotocards.length;
-            updateHeroCard(heroCardIndex);
-            showToast("✨ Switched featured SSR Photocard!");
-        }
-
-        function openLightbox(cardId) {
-            const card = allPhotocards.find(c => c.id === cardId);
-            if (!card) return;
-            const modal = document.getElementById('lightboxModal');
-            const img = document.getElementById('lightboxImg');
-            img.onerror = function() {
-                if (card.fallbackUrl && this.src !== card.fallbackUrl) {
-                    this.src = card.fallbackUrl;
-                }
-            };
-            img.src = card.url;
-            document.getElementById('lightboxCaption').textContent = card.caption;
-            document.getElementById('lightboxBadge').textContent = card.rarity || 'SSR PHOTOCARD';
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeLightbox() {
-            const modal = document.getElementById('lightboxModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        /**
-         * Calculates live countdown to Nguyễn Đạo Thành's birthday (8/12/2008)
-         * Supports both DD/MM/YYYY (8 December) and MM/DD/YYYY (12 August)
-         */
-        function updateBirthdayCountdown() {
+        function updateMiniBirthday() {
             const now = new Date();
-            const currentYear = now.getFullYear();
-            // Month is 0-indexed in JS Date: 11 = December, 7 = August
-            const targetMonth = useDayMonthFormat ? 11 : 7;
-            const targetDay = useDayMonthFormat ? 8 : 12;
-
-            let nextBday = new Date(currentYear, targetMonth, targetDay, 0, 0, 0);
-            if (now > nextBday) {
-                nextBday = new Date(currentYear + 1, targetMonth, targetDay, 0, 0, 0);
-            }
-
-            const diff = nextBday - now;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const mins = Math.floor((diff / 1000 / 60) % 60);
-            const secs = Math.floor((diff / 1000) % 60);
-
-            document.getElementById('cdDays').textContent = String(days).padStart(2, '0');
-            document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
-            document.getElementById('cdMins').textContent = String(mins).padStart(2, '0');
-            document.getElementById('cdSecs').textContent = String(secs).padStart(2, '0');
-
-            const turningAge = nextBday.getFullYear() - 2008;
-            document.getElementById('ageDisplay').textContent = `✨ Turning ${turningAge} years old! ('08 Liner)`;
+            let next = new Date(now.getFullYear(), 11, 8);
+            if (now > next) next = new Date(now.getFullYear() + 1, 11, 8);
+            const days = Math.ceil((next - now) / (1000 * 60 * 60 * 24));
+            const el = document.getElementById('bdayCountdownMini');
+            if (el) el.textContent = `${days} days until bday! 🎉`;
         }
 
-        function toggleBirthdayFormat() {
-            useDayMonthFormat = !useDayMonthFormat;
-            const btn = document.getElementById('bdayFormatBtn');
-            const sub = document.getElementById('bdaySubtext');
-            if (useDayMonthFormat) {
-                btn.textContent = "📅 8 Dec 2008 (DD/MM)";
-                sub.textContent = "Counting down to December 8 (8/12/2008) — get the sweet cakes and cat plushies ready!";
-                showToast("📅 Birthday set to 8 December 2008 (DD/MM/YYYY)");
-            } else {
-                btn.textContent = "📅 Aug 12, 2008 (MM/DD)";
-                sub.textContent = "Counting down to August 12 (8/12/2008) — get the sweet cakes and cat plushies ready!";
-                showToast("📅 Birthday set to August 12, 2008 (MM/DD/YYYY)");
-            }
-            updateBirthdayCountdown();
-        }
-
-        /**
-         * Spawns cute floating hearts / paws / sweets when cheering for Đạo Thành
-         */
         function triggerFanCheer(event) {
             heartCount++;
             localStorage.setItem('ndt_hearts', String(heartCount));
             document.getElementById('headerHeartCount').textContent = heartCount.toLocaleString();
 
-            const emojis = ['💖', '🌸', '🐱', '🍰', '🏳️‍🌈', '🎀', '✨', '🍓'];
+            const emojis = ['💖', '🌸', '🐱', '🍰', '🏳️‍🌈', '🎀'];
             const x = event?.clientX || (window.innerWidth / 2);
             const y = event?.clientY || (window.innerHeight / 2);
 
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 3; i++) {
                 const span = document.createElement('span');
-                span.className = 'floating-heart text-2xl select-none';
+                span.className = 'floating-heart text-xl select-none';
                 span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                span.style.left = `${x + (Math.random() * 50 - 25)}px`;
+                span.style.left = `${x + (Math.random() * 40 - 20)}px`;
                 span.style.top = `${y + (Math.random() * 20 - 10)}px`;
                 document.body.appendChild(span);
-                setTimeout(() => span.remove(), 1500);
+                setTimeout(() => span.remove(), 1200);
             }
         }
 
-        /**
-         * Interactive Sweet Treats & Cat Petting Mini-Game
-         */
-        function giveTreat(emoji, message) {
-            treatCount++;
-            localStorage.setItem('ndt_treats', String(treatCount));
-            document.getElementById('treatCounter').textContent = treatCount.toLocaleString();
-
-            const mascot = document.getElementById('mascotAvatar');
-            const speech = document.getElementById('mascotSpeech');
-            mascot.textContent = `😻${emoji}`;
-            mascot.classList.add('scale-125');
-            setTimeout(() => mascot.classList.remove('scale-125'), 300);
-
-            speech.textContent = `"${message}"`;
-            triggerFanCheer();
-        }
-
-        function renderFanNotes() {
-            const saved = JSON.parse(localStorage.getItem('ndt_fan_notes') || 'null') || defaultFanNotes;
-            const list = document.getElementById('fanNotesList');
-            document.getElementById('fanNotesCount').textContent = `${saved.length} Fan Notes`;
-
-            list.innerHTML = saved.map(note => `
-                <div class="p-3.5 rounded-2xl bg-sakura-50/60 dark:bg-slate-900/70 border border-sakura-100 dark:border-slate-700/80">
-                    <div class="flex items-center justify-between text-xs font-bold text-sakura-600 dark:text-sakura-400 mb-1">
-                        <span>💖 ${escapeHtml(note.name)}</span>
-                        <span class="text-[10px] text-slate-400">${escapeHtml(note.time)}</span>
-                    </div>
-                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200">${escapeHtml(note.msg)}</p>
-                </div>
-            `).join('');
-        }
-
-        function submitFanNote(e) {
-            e.preventDefault();
-            const nameInput = document.getElementById('fanNameInput');
-            const msgInput = document.getElementById('fanMsgInput');
-            const saved = JSON.parse(localStorage.getItem('ndt_fan_notes') || 'null') || defaultFanNotes;
-
-            saved.unshift({
-                name: nameInput.value.trim(),
-                msg: msgInput.value.trim(),
-                time: "Just now ✨"
-            });
-            localStorage.setItem('ndt_fan_notes', JSON.stringify(saved.slice(0, 30)));
-            nameInput.value = '';
-            msgInput.value = '';
-            renderFanNotes();
-            triggerFanCheer();
-            showToast("💌 Your sweet note for Đạo Thành has been posted!");
-        }
-
-        function escapeHtml(str) {
-            return String(str).replace(/[&<>"']/g, m => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-            })[m]);
-        }
-
-        // Modal Handlers
-        function openGithubModal() {
-            const m = document.getElementById('githubModal');
+        function openVercelModal() {
+            const m = document.getElementById('vercelModal');
             m.classList.remove('hidden');
             m.classList.add('flex');
         }
-        function closeGithubModal() {
-            const m = document.getElementById('githubModal');
+        function closeVercelModal() {
+            const m = document.getElementById('vercelModal');
             m.classList.add('hidden');
             m.classList.remove('flex');
         }
-        async function saveAndSyncGithub() {
-            const owner = document.getElementById('ghOwnerInput').value.trim();
-            const repo = document.getElementById('ghRepoInput').value.trim();
-            const path = document.getElementById('ghPathInput').value.trim() || 'photos';
-
-            localStorage.setItem('ndt_gh_owner', owner);
-            localStorage.setItem('ndt_gh_repo', repo);
-            localStorage.setItem('ndt_gh_path', path);
-
-            const statusEl = document.getElementById('ghSyncResultMsg');
-            statusEl.textContent = "Scanning GitHub repository...";
-            await loadPhotosFromGithub();
-            statusEl.textContent = "✓ Synced! Any photos in /" + path + " are now live.";
-            showToast("📸 GitHub repository settings saved & synced!");
-        }
-
         function openUploadPhotoModal() {
             const m = document.getElementById('uploadPhotoModal');
             m.classList.remove('hidden');
@@ -1603,11 +919,10 @@
             const file = event.target.files?.[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = e => {
                 document.getElementById('newPhotoUrl').value = e.target.result;
                 if (!document.getElementById('newPhotoCaption').value) {
-                    const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]+/g, " ");
-                    document.getElementById('newPhotoCaption').value = `${cleanName} ✨`;
+                    document.getElementById('newPhotoCaption').value = file.name.replace(/\.[^/.]+$/, '') + ' ✨';
                 }
             };
             reader.readAsDataURL(file);
@@ -1617,81 +932,51 @@
             event.preventDefault();
             const url = document.getElementById('newPhotoUrl').value.trim();
             const caption = document.getElementById('newPhotoCaption').value.trim();
-            const category = document.getElementById('newPhotoCategory').value;
-
             const newCard = {
                 id: 'custom-' + Date.now(),
-                url: url,
+                url,
                 fallbackUrl: url,
-                caption: caption,
-                category: category,
-                rarity: 'UR ★ FAN DROP',
-                date: 'New Upload'
+                caption,
+                rarity: 'UR ★ UPLOAD'
             };
-
-            const savedCustom = JSON.parse(localStorage.getItem('ndt_custom_photos') || '[]');
-            savedCustom.unshift(newCard);
-            localStorage.setItem('ndt_custom_photos', JSON.stringify(savedCustom));
-
+            const saved = JSON.parse(localStorage.getItem('ndt_custom_photos') || '[]');
+            saved.unshift(newCard);
+            localStorage.setItem('ndt_custom_photos', JSON.stringify(saved));
             allPhotocards.unshift(newCard);
             renderPhotocardGallery();
-            updateHeroCard(0);
             closeUploadPhotoModal();
-            document.getElementById('newPhotoUrl').value = '';
-            document.getElementById('newPhotoCaption').value = '';
-            showToast("📸 New Photocard added to Nguyễn Đạo Thành's gallery!");
+            showToast("📸 Added new photocard!");
         }
 
-        // Copy helper using execCommand for iframe compatibility
-        function copyText(text, message) {
+        function copyText(text, msg) {
             const ta = document.createElement('textarea');
             ta.value = text;
             document.body.appendChild(ta);
             ta.select();
-            try {
-                document.execCommand('copy');
-                showToast(message || "Copied to clipboard!");
-            } catch (err) {
-                showToast("Copied: " + text);
-            }
+            document.execCommand('copy');
             document.body.removeChild(ta);
+            showToast(msg);
         }
 
-        // Toast Helper
         let toastTimeout;
         function showToast(msg) {
             const box = document.getElementById('toastBox');
             document.getElementById('toastMessage').textContent = msg;
             box.classList.remove('opacity-0', 'translate-y-4');
             clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                box.classList.add('opacity-0', 'translate-y-4');
-            }, 3200);
+            toastTimeout = setTimeout(() => box.classList.add('opacity-0', 'translate-y-4'), 2800);
         }
 
-        // Theme Toggle
         function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            html.classList.toggle('dark');
-            if (html.classList.contains('dark')) {
-                icon.className = 'ph-fill ph-sun text-lg text-amber-400';
-                showToast("🌙 Starlight Night Mode activated!");
-            } else {
-                icon.className = 'ph-fill ph-moon-stars text-lg text-lilac-500';
-                showToast("🌸 Pastel Sakura Day Mode activated!");
-            }
+            document.documentElement.classList.toggle('dark');
         }
 
-        // Initialize Website on Load
-        window.addEventListener('DOMContentLoaded', () => {
+        window.onload = function () {
             document.getElementById('headerHeartCount').textContent = heartCount.toLocaleString();
-            document.getElementById('treatCounter').textContent = treatCount.toLocaleString();
-            updateBirthdayCountdown();
-            setInterval(updateBirthdayCountdown, 1000);
-            renderFanNotes();
-            loadPhotosFromGithub();
-        });
+            init3DModel();
+            updateMiniBirthday();
+            loadAllPhotos();
+        };
     </script>
 </body>
 </html>
