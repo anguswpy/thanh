@@ -1,981 +1,1918 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nguyễn Đạo Thành ✨ Official 3D Fan Hub</title>
+    <title>Nguyễn Đạo Thành — Digital Lookbook & Personal Archive</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Quicksand:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Three.js for the Interactive 3D Escalator Outfit Model -->
+    <!-- Three.js r128 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        display: ['"Quicksand"', 'sans-serif'],
-                        mono: ['"Space Grotesk"', 'monospace'],
-                    },
-                    colors: {
-                        sakura: {
-                            50: '#fff5f8',
-                            100: '#ffe8f0',
-                            200: '#ffd0e2',
-                            300: '#ffa9ca',
-                            400: '#ff75a8',
-                            500: '#fa4687',
-                            600: '#e82368',
-                        },
-                        lilac: {
-                            50: '#f8f5ff',
-                            100: '#efe8ff',
-                            200: '#dfd2ff',
-                            300: '#c6adff',
-                            400: '#a67aff',
-                            500: '#8b4dff',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
+    <!-- Google Fonts: Syne, Cormorant Garamond, Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg, #fff5f8 0%, #f8f5ff 50%, #eef8ff 100%);
-        }
-        .dark {
-            --bg-gradient: linear-gradient(135deg, #130f1e 0%, #191229 50%, #101726 100%);
-        }
         body {
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            overflow-x: hidden;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0e0f14;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        .holo-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .font-display {
+            font-family: 'Syne', sans-serif;
         }
-        .holo-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 35px -12px rgba(250, 70, 135, 0.22);
+        .font-editorial {
+            font-family: 'Cormorant Garamond', serif;
         }
-        @keyframes floatUpHeart {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            100% { opacity: 0; transform: translateY(-130px) scale(1.15); }
-        }
-        .floating-heart {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            animation: floatUpHeart 1.2s ease-out forwards;
-        }
-        #threeCanvasContainer canvas {
-            display: block;
-            width: 100% !important;
-            height: 100% !important;
+        #canvas-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             cursor: grab;
+            z-index: 1;
         }
-        #threeCanvasContainer canvas:active {
+        #canvas-container:active {
             cursor: grabbing;
+        }
+        .glass-pill {
+            background: rgba(18, 19, 26, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .editorial-gradient {
+            background: radial-gradient(circle at 50% 35%, rgba(244, 162, 184, 0.12) 0%, rgba(14, 15, 20, 0) 70%);
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(244, 162, 184, 0.25);
+            border-radius: 9999px;
         }
     </style>
 </head>
+<body class="relative w-screen h-screen overflow-hidden">
 
-<body class="text-slate-800 dark:text-slate-100 antialiased selection:bg-sakura-300 selection:text-sakura-900 min-h-screen flex flex-col">
+    <!-- Subtle Ambient Fashion Backdrop Glow -->
+    <div class="fixed inset-0 editorial-gradient pointer-events-none z-0"></div>
 
-    <!-- Minimal Sticky Header -->
-    <header class="sticky top-0 z-40 backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 border-b border-sakura-200/60 dark:border-slate-800">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-            <a href="#top" class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sakura-400 to-lilac-400 flex items-center justify-center text-white font-bold shadow-sm">
-                    🐱
-                </div>
-                <div>
-                    <span class="font-display font-extrabold text-lg bg-gradient-to-r from-sakura-600 to-lilac-500 bg-clip-text text-transparent">
-                        Nguyễn Đạo Thành
-                    </span>
-                    <span class="hidden sm:inline-block ml-1.5 text-[11px] px-2 py-0.5 rounded-full bg-sakura-100 dark:bg-slate-800 text-sakura-600 dark:text-sakura-300 font-bold">
-                        CUHK IBBA • CW Chu
-                    </span>
-                </div>
-            </a>
+    <!-- 3D WebGL Canvas Container -->
+    <div id="canvas-container"></div>
 
-            <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
-                <a href="#top" class="hover:text-sakura-500 transition-colors">3D Model</a>
-                <a href="#about" class="hover:text-sakura-500 transition-colors">Profile</a>
-                <a href="#gallery" class="hover:text-sakura-500 transition-colors">Photos</a>
-            </nav>
+    <!-- Clean Perimeter Editorial Overlay (Leaves Center 3D Model 100% Uncovered) -->
+    <div class="fixed inset-0 pointer-events-none z-10 flex flex-col justify-between p-4 sm:p-6 md:p-8">
 
-            <div class="flex items-center gap-2">
-                <button onclick="triggerFanCheer(event)" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs shadow-sm active:scale-95 transition-all">
-                    <i class="ph-fill ph-heart"></i>
-                    <span id="headerHeartCount" class="font-mono">2,812</span>
-                </button>
-                <button onclick="openVercelModal()" class="px-3 py-1.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs flex items-center gap-1 hover:opacity-90 transition-opacity" title="Vercel Server-Side Guide">
-                    <i class="ph-fill ph-triangle"></i>
-                    <span class="hidden sm:inline">Vercel Setup</span>
-                </button>
-                <button onclick="toggleTheme()" class="p-2 rounded-full bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 text-slate-700 dark:text-slate-200">
-                    <i id="themeIcon" class="ph-fill ph-moon-stars text-base text-lilac-500"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <main id="top" class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-16">
-
-        <!-- HERO + 3D MODEL SECTION -->
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <!-- Left: Clean & Concise Bio (6 Cols) -->
-            <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
-                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
-                    <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-sky-500 text-white shadow-sm">
-                        🏳️‍🌈 Gay
-                    </span>
-                    <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-sakura-100 dark:bg-sakura-950 text-sakura-600 dark:text-sakura-300 border border-sakura-300 dark:border-sakura-800">
-                        🎀 Femboy Aesthetic
-                    </span>
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                        🎂 08.12.2008
-                    </span>
-                </div>
-
-                <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight">
-                    Nguyễn <span class="bg-gradient-to-r from-sakura-500 via-lilac-500 to-sky-400 bg-clip-text text-transparent">Đạo Thành</span>
+        <!-- Top Header: Name + Leo Nickname & Social Pill Links -->
+        <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+            <div class="pointer-events-auto flex items-baseline gap-3 flex-wrap">
+                <h1 class="font-display text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-none">
+                    Nguyễn Đạo Thành
                 </h1>
-
-                <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
-                    Studying <strong>IBBA at CUHK</strong> & living at <strong>CW Chu College</strong>. Powered by sweet desserts 🍰, cute cats 🐱, and iconic pastel fits. Drag the 3D model to inspect his signature striped crop-top, heart choker & pleated skirt look!
-                </p>
-
-                <!-- Social Quick Links -->
-                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
-                    <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-sm shadow-md hover:opacity-95 transition-all">
-                        <i class="ph-fill ph-instagram-logo text-lg"></i>
-                        <span>@iamfinethanhyou</span>
-                    </a>
-                    <a href="https://www.facebook.com/search/top/?q=Dao%20Thanh" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 font-bold text-sm hover:border-sakura-400 transition-all">
-                        <i class="ph-fill ph-facebook-logo text-lg text-blue-500"></i>
-                        <span>FB: Dao Thanh</span>
-                    </a>
-                </div>
+                <span class="font-editorial italic text-xl sm:text-2xl text-pink-200/90">
+                    “Leo”
+                </span>
             </div>
 
-            <!-- Right: Interactive 3D Character Stage (6 Cols) -->
-            <div class="lg:col-span-6">
-                <div class="bg-white/85 dark:bg-slate-800/85 backdrop-blur-xl rounded-[28px] p-4 border-2 border-sakura-200/80 dark:border-slate-700 shadow-xl relative">
-                    <!-- Top 3D Stage Bar -->
-                    <div class="flex items-center justify-between px-2 mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-gradient-to-r from-sakura-500 to-lilac-500 text-white">
-                                3D FIGURINE
-                            </span>
-                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">
-                                Escalator Look • Drag to Rotate 360°
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="trigger3DJump()" class="px-2.5 py-1 rounded-lg bg-sakura-100 dark:bg-slate-700 text-sakura-600 dark:text-sakura-300 text-xs font-bold hover:bg-sakura-200 transition-colors">
-                                ✨ Pose / Jump
-                            </button>
-                            <button onclick="toggleAutoSpin()" id="spinToggleBtn" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold">
-                                ⟳ Spin: ON
-                            </button>
-                        </div>
-                    </div>
+            <!-- Social Links (Instagram, Facebook, Snapchat) -->
+            <div class="pointer-events-auto flex flex-wrap items-center gap-2">
+                <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" rel="noopener noreferrer"
+                   class="glass-pill px-3 py-1.5 rounded-full text-xs font-medium text-zinc-200 hover:text-pink-200 hover:border-pink-300/50 transition flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-pink-300"></span>
+                    <span>Instagram</span>
+                    <span class="text-zinc-400 hidden xl:inline">@iamfinethanhyou</span>
+                </a>
+                <a href="https://www.facebook.com/dthanhxdthanh" target="_blank" rel="noopener noreferrer"
+                   class="glass-pill px-3 py-1.5 rounded-full text-xs font-medium text-zinc-200 hover:text-pink-200 hover:border-pink-300/50 transition flex items-center gap-1.5">
+                    <span>Facebook</span>
+                </a>
+                <a href="https://www.snapchat.com/add/leeowl26" target="_blank" rel="noopener noreferrer"
+                   class="glass-pill px-3 py-1.5 rounded-full text-xs font-medium text-zinc-200 hover:text-pink-200 hover:border-pink-300/50 transition flex items-center gap-1.5">
+                    <span>Snapchat</span>
+                    <span class="text-pink-200/80">@leeowl26</span>
+                </a>
+            </div>
+        </header>
 
-                    <!-- Three.js Canvas Container -->
-                    <div id="threeCanvasContainer" class="w-full h-[390px] sm:h-[430px] rounded-2xl overflow-hidden bg-gradient-to-b from-sakura-100/70 via-lilac-100/50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative">
-                        <!-- Outfit Callout Pills -->
-                        <div class="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5 pointer-events-none">
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/50 backdrop-blur-md text-white">
-                                💗 Pink Heart Choker
-                            </span>
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/50 backdrop-blur-md text-white">
-                                👚 Striped Crop Top & Skirt
-                            </span>
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/50 backdrop-blur-md text-white">
-                                👟 Cat Sneakers
-                            </span>
-                        </div>
+        <!-- Side & Corner Micro-Cards Docked to Screen Edges So Center Model Stays Clear -->
+        <div class="w-full flex flex-col md:flex-row items-stretch md:items-end justify-between gap-3 pointer-events-none">
+
+            <!-- Left Edge Compact Stack: Identity, Birthday & Cravings (No Paragraphs) -->
+            <div class="glass-pill pointer-events-auto p-3.5 rounded-2xl w-full md:w-[235px] backdrop-blur-xl space-y-2.5">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-pink-200 font-semibold">Leo · 08.12.2008</span>
+                    <span class="text-zinc-400 text-[11px]">Vietnamese</span>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-pink-300/15 text-pink-200 border border-pink-300/30">
+                        Gay femboy
+                    </span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/5 text-zinc-200 border border-white/10">
+                        Cat lover
+                    </span>
+                </div>
+
+                <div class="pt-2 border-t border-white/10">
+                    <div class="text-[10px] uppercase tracking-[0.16em] text-zinc-400 mb-1">
+                        Cravings
+                    </div>
+                    <div class="flex flex-wrap gap-1 text-[11px] text-pink-100/90">
+                        <span class="px-2 py-0.5 rounded bg-white/5">Korean food</span>
+                        <span class="px-2 py-0.5 rounded bg-white/5">Sweets</span>
+                        <span class="px-2 py-0.5 rounded bg-white/5">Unhealthy food</span>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- COMPACT BENTO PROFILE -->
-        <section id="about" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
-                <div class="text-xs font-bold text-sakura-500">🎓 University</div>
-                <div class="font-display font-extrabold text-base mt-1">CUHK — IBBA</div>
-                <div class="text-[11px] text-slate-400">Business Admin</div>
-            </div>
-            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
-                <div class="text-xs font-bold text-lilac-500">🏡 College</div>
-                <div class="font-display font-extrabold text-base mt-1">CW Chu College</div>
-                <div class="text-[11px] text-slate-400">Resident Cutie</div>
-            </div>
-            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
-                <div class="text-xs font-bold text-pink-500">🎂 Birthday</div>
-                <div class="font-display font-extrabold text-base mt-1">8 / 12 / 2008</div>
-                <div id="bdayCountdownMini" class="text-[11px] text-sakura-500 font-bold">Loading...</div>
-            </div>
-            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
-                <div class="text-xs font-bold text-purple-500">🏳️‍🌈 Identity</div>
-                <div class="font-display font-extrabold text-base mt-1">Gay & Femboy</div>
-                <div class="text-[11px] text-slate-400">Pastel Icon 🎀</div>
-            </div>
-            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
-                <div class="text-xs font-bold text-amber-500">🍰 Cravings</div>
-                <div class="font-display font-extrabold text-base mt-1">Sweet Food</div>
-                <div class="text-[11px] text-slate-400">Cakes & Boba 🧋</div>
-            </div>
-            <div class="bg-white/85 dark:bg-slate-800/85 p-4 rounded-2xl border border-sakura-200/70 dark:border-slate-700 shadow-sm">
-                <div class="text-xs font-bold text-sky-500">🐱 Spirit Animal</div>
-                <div class="font-display font-extrabold text-base mt-1">Cat Lover</div>
-                <div class="text-[11px] text-slate-400">Meow Approved 🐾</div>
-            </div>
-        </section>
+            <!-- Right Edge Compact Stack: Education, Scores & PR Leadership -->
+            <div class="glass-pill pointer-events-auto p-3.5 rounded-2xl w-full md:w-[295px] backdrop-blur-xl space-y-2.5 text-xs">
 
-        <!-- CLEAN PHOTOCARD GALLERY -->
-        <section id="gallery" class="space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl">
-                            📸 Photocard Archive
-                        </h2>
-                        <span id="syncSourceBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sakura-100 dark:bg-slate-800 text-sakura-600 dark:text-sakura-300">
-                            Auto-Sync Ready
-                        </span>
+                <!-- Education -->
+                <div class="space-y-1">
+                    <div class="text-[10px] uppercase tracking-[0.16em] text-pink-300/80 font-semibold">
+                        Education
                     </div>
-                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                        Drop photos (like <code class="font-mono font-bold text-sakura-500">photos/IMG_6962.JPG</code>) into your <code class="font-mono font-bold">photos/</code> folder — automatically loaded via Vercel Server API or GitHub!
-                    </p>
+                    <div class="flex justify-between items-baseline gap-2">
+                        <span class="text-white font-medium">CUHK · IBBA <span class="text-pink-200/80 font-normal">(CW Chu)</span></span>
+                        <span class="text-[10px] text-zinc-400">Current</span>
+                    </div>
+                    <div class="flex justify-between items-baseline gap-2 text-[11px]">
+                        <span class="text-zinc-300 truncate">THCS &amp; THPT Nguyễn Tất Thành (HN)</span>
+                        <span class="text-[10px] text-zinc-400 shrink-0">2023–26</span>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <button onclick="openUploadPhotoModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs shadow-sm hover:opacity-95">
-                        + Add / Preview Photo
-                    </button>
-                    <button onclick="openVercelModal()" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 font-bold text-xs hover:border-sakura-400">
-                        ⚡ How to Sync on Vercel
-                    </button>
-                </div>
-            </div>
-
-            <!-- Photocard Grid -->
-            <div id="photocardGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                <!-- Populated by JS -->
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="mt-12 border-t border-sakura-200/60 dark:border-slate-800 py-6 text-center text-xs text-slate-500">
-        Made with 💖 for <strong>Nguyễn Đạo Thành</strong> • CUHK IBBA • CW Chu College • <a href="https://www.instagram.com/iamfinethanhyou/" target="_blank" class="text-sakura-500 font-bold hover:underline">@iamfinethanhyou</a>
-    </footer>
-
-    <!-- ===================================================================== -->
-    <!-- VERCEL SERVER-SIDE SETUP MODAL (EASY COPY-PASTE GUIDE)                -->
-    <!-- ===================================================================== -->
-    <div id="vercelModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-sakura-200 dark:border-slate-700 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-4 border-b border-sakura-100 dark:border-slate-800">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center font-bold">
-                        ▲
-                    </div>
+                <!-- Scores -->
+                <div class="pt-2 border-t border-white/10 flex items-center justify-between gap-1.5">
                     <div>
-                        <h3 class="font-display font-bold text-lg">How to Host Server-Side on Vercel</h3>
-                        <p class="text-xs text-slate-500">Zero server maintenance — works just like your regular Vercel workflow!</p>
+                        <span class="text-pink-200 font-semibold">SAT 1560</span>
+                        <span class="text-[10px] text-zinc-400 block">800 Math · 760 R&amp;W (Mar 14, 2026)</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded bg-white/10 border border-white/15 text-[11px] font-semibold text-white shrink-0">
+                        IELTS 8.0
+                    </span>
+                </div>
+
+                <!-- Leadership -->
+                <div class="pt-2 border-t border-white/10 space-y-1">
+                    <div class="text-[10px] uppercase tracking-[0.16em] text-pink-300/80 font-semibold">
+                        Head of Public Relations
+                    </div>
+                    <div class="flex justify-between items-baseline gap-2 text-[11px]">
+                        <span class="text-zinc-200">MCO — Making Color Org <span class="text-zinc-400">(NTT)</span></span>
+                        <span class="text-[10px] text-zinc-400 shrink-0">08/2024–10/2025</span>
+                    </div>
+                    <div class="flex justify-between items-baseline gap-2 text-[11px]">
+                        <span class="text-zinc-200">MMC — Minh Khai Music Club</span>
+                        <span class="text-[10px] text-zinc-400 shrink-0">10/2023–06/2025</span>
                     </div>
                 </div>
-                <button onclick="closeVercelModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i class="ph-bold ph-x"></i>
-                </button>
+
             </div>
-
-            <div class="space-y-4 my-5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-                <div class="p-4 rounded-2xl bg-sakura-50/70 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700 space-y-2">
-                    <div class="font-bold text-sakura-600 dark:text-sakura-300">
-                        ✨ 3-Step Vercel Serverless Setup (Auto-Reads `/photos` Folder):
-                    </div>
-                    <ol class="list-decimal list-inside space-y-1.5">
-                        <li>In your GitHub repo connected to Vercel, create a <code class="font-mono font-bold text-sakura-600">photos/</code> folder and drop <code class="font-mono font-bold">IMG_6962.JPG</code> (and any new photos) inside it.</li>
-                        <li>Create a file named <code class="font-mono font-bold text-lilac-600">api/photos.js</code> in your project with the 12-line serverless code below.</li>
-                        <li>Push to GitHub! Vercel automatically runs <code class="font-mono">/api/photos</code> on the server, scans your <code class="font-mono">photos/</code> folder, and displays every image on the website automatically.</li>
-                    </ol>
-                </div>
-
-                <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="font-bold text-xs uppercase text-slate-400">File 1: api/photos.js (Vercel Serverless Function)</span>
-                        <button onclick="copyText(document.getElementById('vercelCodeSnippet').innerText, 'Copied api/photos.js code!')" class="text-xs font-bold text-sakura-500 hover:underline">
-                            Copy Code
-                        </button>
-                    </div>
-                    <pre id="vercelCodeSnippet" class="p-4 rounded-2xl bg-slate-900 text-emerald-300 font-mono text-[11px] overflow-x-auto">const fs = require('fs');
-const path = require('path');
-
-module.exports = (req, res) => {
-  const photosDir = path.join(process.cwd(), 'photos');
-  if (!fs.existsSync(photosDir)) return res.json({ photos: [] });
-
-  const files = fs.readdirSync(photosDir)
-    .filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f));
-
-  const photos = files.map((file, i) => ({
-    id: `srv-${i}`,
-    url: `/photos/${file}`,
-    caption: file.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ') + ' ✨',
-    rarity: 'SSR ★ VERCEL'
-  }));
-
-  res.status(200).json({ photos });
-};</pre>
-                </div>
-            </div>
-
-            <div class="flex justify-end pt-3 border-t border-sakura-100 dark:border-slate-800">
-                <button onclick="closeVercelModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">
-                    Got It!
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===================================================================== -->
-    <!-- ADD / PREVIEW PHOTO MODAL                                             -->
-    <!-- ===================================================================== -->
-    <div id="uploadPhotoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-sakura-200 dark:border-slate-700 shadow-2xl">
-            <div class="flex items-center justify-between pb-3 border-b border-sakura-100 dark:border-slate-800">
-                <h3 class="font-display font-bold text-lg">📸 Add / Preview Photo</h3>
-                <button onclick="closeUploadPhotoModal()" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i class="ph-bold ph-x"></i>
-                </button>
-            </div>
-            <form onsubmit="handleAddCustomPhoto(event)" class="space-y-3.5 mt-4 text-xs sm:text-sm">
-                <div>
-                    <label class="block font-bold mb-1">Select Photo from Device</label>
-                    <input type="file" accept="image/*" onchange="handleLocalFileSelect(event)"
-                           class="w-full text-xs file:mr-3 file:py-2 file:px-3.5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-sakura-100 file:text-sakura-700">
-                </div>
-                <div>
-                    <label class="block font-bold mb-1">Or Image Path / URL</label>
-                    <input id="newPhotoUrl" type="text" required placeholder="photos/IMG_6962.JPG or https://..."
-                           class="w-full px-3.5 py-2 rounded-xl bg-sakura-50/60 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700">
-                </div>
-                <div>
-                    <label class="block font-bold mb-1">Caption</label>
-                    <input id="newPhotoCaption" type="text" required placeholder="Escalator Fit Check 🎀✨"
-                           class="w-full px-3.5 py-2 rounded-xl bg-sakura-50/60 dark:bg-slate-800 border border-sakura-200 dark:border-slate-700">
-                </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeUploadPhotoModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">Cancel</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sakura-500 to-lilac-500 text-white font-bold text-xs">Add to Gallery</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toastBox" class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
-        <div class="bg-slate-900 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2">
-            <span>✨</span>
-            <span id="toastMessage">Saved!</span>
         </div>
     </div>
 
     <script>
-        /**
-         * =========================================================================
-         * 1. THREE.JS 3D MODEL OF NGUYỄN ĐẠO THÀNH (BASED ON IMG_6962.JPG)
-         * =========================================================================
-         * Recreates his exact outfit from the mall escalator photo:
-         * - Pink & white horizontal striped long-sleeve crop top
-         * - Pink choker with a silver heart charm in the center
-         * - Black backpack with front shoulder straps
-         * - Black pleated mini skirt + subtle midriff gap
-         * - Black thigh-high socks + white sneakers with pink cat-ear tongues
-         * - Parted brown hair with blonde front highlights
-         * - Standing on a moving mall escalator with glass handrail & pink cat sticker
-         */
-        let scene, camera, renderer, characterGroup, escalatorSteps = [];
-        let autoSpin = true;
-        let isDragging = false;
-        let prevMouseX = 0;
-        let jumpVelocity = 0;
-        let jumpOffset = 0;
+        // ==========================================
+        // 1. SCENE, CAMERA & RENDERER INITIALIZATION
+        // ==========================================
+        let scene, camera, renderer;
+        let characterGroup, headGroup, breathingGroup;
+        let escalatorSteps = [];
+        let ambientLight, mainDirLight, fillLight, atriumPointLight, rimLight;
 
-        function createStripedCropTopTexture() {
+        // Custom Orbit Control State
+        const orbit = {
+            theta: 0.12,         // Horizontal angle (radians)
+            phi: 1.34,           // Vertical angle (radians)
+            radius: 4.8,         // Distance from target
+            target: new THREE.Vector3(0, 1.28, 0),
+            desiredTheta: 0.12,
+            desiredPhi: 1.34,
+            desiredRadius: 4.8,
+            desiredTarget: new THREE.Vector3(0, 1.28, 0),
+            isDragging: false,
+            isPanning: false,
+            prevX: 0,
+            prevY: 0
+        };
+
+        // ==========================================
+        // 2. PROCEDURAL TEXTURE GENERATORS
+        // ==========================================
+
+        // High-Resolution Realistic Portrait Face Texture matching the subject in the photos
+        function createRealisticFaceTexture() {
             const canvas = document.createElement('canvas');
-            canvas.width = 256;
-            canvas.height = 256;
+            canvas.width = 1024;
+            canvas.height = 1024;
             const ctx = canvas.getContext('2d');
-            const stripeCount = 14;
-            const stripeHeight = canvas.height / stripeCount;
-            for (let i = 0; i < stripeCount; i++) {
-                ctx.fillStyle = i % 2 === 0 ? '#ffc2d4' : '#ffffff';
-                ctx.fillRect(0, i * stripeHeight, canvas.width, stripeHeight);
+
+            // 1. Base Realistic Warm Asian Skin Complexion
+            const baseGrad = ctx.createLinearGradient(0, 0, 0, 1024);
+            baseGrad.addColorStop(0.0, '#e3b59b');
+            baseGrad.addColorStop(0.45, '#ecc1a8');
+            baseGrad.addColorStop(0.75, '#e5b69c');
+            baseGrad.addColorStop(1.0, '#d6a389');
+            ctx.fillStyle = baseGrad;
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            // Subtle anatomical subsurface warmth (cheeks, nose, forehead)
+            function drawSoftGlow(x, y, rx, ry, color) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.scale(rx, ry);
+                const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+                g.addColorStop(0, color);
+                g.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(0, 0, 1, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             }
+
+            // Forehead & cheek warmth
+            drawSoftGlow(512, 340, 220, 130, 'rgba(255, 228, 210, 0.35)');
+            drawSoftGlow(375, 555, 95, 75, 'rgba(232, 138, 128, 0.24)');
+            drawSoftGlow(649, 555, 95, 75, 'rgba(232, 138, 128, 0.24)');
+            // Subtle shadow under cheekbones & jawline contour
+            drawSoftGlow(330, 680, 110, 120, 'rgba(165, 110, 88, 0.18)');
+            drawSoftGlow(694, 680, 110, 120, 'rgba(165, 110, 88, 0.18)');
+
+            // Ultra-fine natural skin pore micro-texture
+            for (let i = 0; i < 18000; i++) {
+                const px = Math.random() * 1024;
+                const py = Math.random() * 1024;
+                ctx.fillStyle = (i % 2 === 0) ? 'rgba(255,245,238,0.03)' : 'rgba(140,85,65,0.03)';
+                ctx.fillRect(px, py, 1.5, 1.5);
+            }
+
+            // 2. Eye Sockets & Natural East Asian Almond Eyes (Centered around y = 472)
+            const leftEyeX = 416;
+            const rightEyeX = 608;
+            const eyeY = 472;
+
+            [leftEyeX, rightEyeX].forEach((ex, idx) => {
+                const dir = (idx === 0) ? -1 : 1; // -1 for left on canvas, +1 for right on canvas
+
+                // Soft orbital socket shading
+                drawSoftGlow(ex, eyeY - 6, 56, 36, 'rgba(162, 106, 84, 0.28)');
+                drawSoftGlow(ex, eyeY + 24, 48, 20, 'rgba(175, 115, 95, 0.18)');
+
+                // Subtle double-eyelid crease line
+                ctx.save();
+                ctx.strokeStyle = 'rgba(115, 68, 52, 0.52)';
+                ctx.lineWidth = 3.2;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(ex - dir * 36, eyeY + 2);
+                ctx.quadraticCurveTo(ex - dir * 4, eyeY - 24, ex + dir * 42, eyeY - 4);
+                ctx.stroke();
+
+                // Sclera (Natural off-white almond shape)
+                ctx.beginPath();
+                ctx.moveTo(ex - dir * 38, eyeY + 4);
+                ctx.quadraticCurveTo(ex - dir * 6, eyeY - 19, ex + dir * 40, eyeY + 1);
+                ctx.quadraticCurveTo(ex + dir * 4, eyeY + 18, ex - dir * 38, eyeY + 4);
+                ctx.closePath();
+
+                ctx.save();
+                ctx.clip();
+
+                const scleraGrad = ctx.createLinearGradient(ex, eyeY - 18, ex, eyeY + 18);
+                scleraGrad.addColorStop(0.0, '#cabab4');
+                scleraGrad.addColorStop(0.28, '#f3ece9');
+                scleraGrad.addColorStop(0.8, '#faf6f5');
+                scleraGrad.addColorStop(1.0, '#d8c8c3');
+                ctx.fillStyle = scleraGrad;
+                ctx.fillRect(ex - 50, eyeY - 25, 100, 50);
+
+                // Inner tear duct warmth
+                drawSoftGlow(ex - dir * 34, eyeY + 4, 10, 8, 'rgba(205, 120, 115, 0.55)');
+
+                // Realistic Dark Brown Iris
+                const irisX = ex - dir * 2;
+                const irisY = eyeY - 1;
+                const irisR = 17.5;
+
+                const irisGrad = ctx.createRadialGradient(irisX, irisY, 3, irisX, irisY, irisR);
+                irisGrad.addColorStop(0.0, '#090605');
+                irisGrad.addColorStop(0.35, '#1c110c');
+                irisGrad.addColorStop(0.78, '#362117');
+                irisGrad.addColorStop(0.95, '#1e120d');
+                irisGrad.addColorStop(1.0, 'rgba(20,12,8,0)');
+                ctx.fillStyle = irisGrad;
+                ctx.beginPath();
+                ctx.arc(irisX, irisY, irisR, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Pupil
+                ctx.fillStyle = '#070504';
+                ctx.beginPath();
+                ctx.arc(irisX, irisY, 6.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Realistic Atrium Specular Catchlights
+                ctx.fillStyle = 'rgba(255, 252, 248, 0.92)';
+                ctx.beginPath();
+                ctx.ellipse(irisX - 5, irisY - 5, 3.4, 2.4, -0.3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'rgba(255, 252, 248, 0.45)';
+                ctx.beginPath();
+                ctx.arc(irisX + 5, irisY + 5, 1.6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Upper lid shadow across top of eyeball
+                const lidShadow = ctx.createLinearGradient(ex, eyeY - 19, ex, eyeY - 4);
+                lidShadow.addColorStop(0, 'rgba(35, 18, 12, 0.65)');
+                lidShadow.addColorStop(1, 'rgba(35, 18, 12, 0)');
+                ctx.fillStyle = lidShadow;
+                ctx.fillRect(ex - 50, eyeY - 22, 100, 20);
+
+                ctx.restore();
+
+                // Upper lash line (soft, natural dark brown-black)
+                ctx.strokeStyle = '#1f1410';
+                ctx.lineWidth = 4.2;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(ex - dir * 38, eyeY + 4);
+                ctx.quadraticCurveTo(ex - dir * 6, eyeY - 19, ex + dir * 41, eyeY + 1);
+                ctx.stroke();
+
+                // Subtle lower lid definition & aegyo-sal contour
+                ctx.strokeStyle = 'rgba(130, 78, 62, 0.42)';
+                ctx.lineWidth = 2.0;
+                ctx.beginPath();
+                ctx.moveTo(ex - dir * 35, eyeY + 5);
+                ctx.quadraticCurveTo(ex + dir * 4, eyeY + 18, ex + dir * 39, eyeY + 2);
+                ctx.stroke();
+
+                ctx.strokeStyle = 'rgba(165, 108, 88, 0.22)';
+                ctx.lineWidth = 2.2;
+                ctx.beginPath();
+                ctx.moveTo(ex - dir * 26, eyeY + 16);
+                ctx.quadraticCurveTo(ex + dir * 2, eyeY + 25, ex + dir * 30, eyeY + 13);
+                ctx.stroke();
+                ctx.restore();
+
+                // 3. Natural Feathered Eyebrows
+                ctx.save();
+                const browY = eyeY - 48;
+                drawSoftGlow(ex + dir * 4, browY, 48, 11, 'rgba(72, 48, 36, 0.45)');
+                ctx.strokeStyle = 'rgba(62, 40, 30, 0.55)';
+                ctx.lineWidth = 2.2;
+                ctx.lineCap = 'round';
+                for (let s = -38; s <= 40; s += 3.5) {
+                    const bx = ex + dir * s;
+                    const arch = -Math.sin(((s + 38) / 78) * Math.PI) * 7;
+                    ctx.beginPath();
+                    ctx.moveTo(bx, browY + arch + 5);
+                    ctx.lineTo(bx + dir * 5, browY + arch - 5);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            });
+
+            // 4. Nose Bridge, Tip & Nostrils Shading (Centered at x = 512, y = 470..585)
+            // Soft shadows along sides of nasal bridge
+            drawSoftGlow(484, 515, 16, 58, 'rgba(168, 112, 88, 0.25)');
+            drawSoftGlow(540, 515, 16, 58, 'rgba(168, 112, 88, 0.25)');
+            // Soft highlight down the nose bridge & rounded tip
+            drawSoftGlow(512, 520, 11, 52, 'rgba(255, 240, 230, 0.38)');
+            drawSoftGlow(512, 574, 22, 16, 'rgba(255, 238, 226, 0.35)');
+            // Shadow beneath nose tip & alar base
+            drawSoftGlow(512, 596, 38, 14, 'rgba(138, 82, 64, 0.42)');
+
+            // Subtle nostrils
+            [-17, 17].forEach((nx) => {
+                ctx.save();
+                ctx.translate(512 + nx, 591);
+                ctx.rotate(nx < 0 ? 0.35 : -0.35);
+                ctx.fillStyle = 'rgba(78, 42, 32, 0.68)';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 7.5, 4.2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Philtrum groove
+            drawSoftGlow(512, 622, 12, 18, 'rgba(155, 98, 78, 0.22)');
+
+            // 5. Realistic Natural Lips (x = 512, y = 656)
+            const lipY = 656;
+            // Shadow under lower lip
+            drawSoftGlow(512, lipY + 34, 34, 11, 'rgba(145, 90, 72, 0.38)');
+
+            // Upper lip (natural muted rose-coral)
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(462, lipY + 3);
+            ctx.quadraticCurveTo(488, lipY - 15, 503, lipY - 12);
+            ctx.quadraticCurveTo(512, lipY - 8, 521, lipY - 12);
+            ctx.quadraticCurveTo(536, lipY - 15, 562, lipY + 3);
+            ctx.quadraticCurveTo(512, lipY + 7, 462, lipY + 3);
+            ctx.closePath();
+            const upperLipGrad = ctx.createLinearGradient(512, lipY - 15, 512, lipY + 5);
+            upperLipGrad.addColorStop(0, '#c87e77');
+            upperLipGrad.addColorStop(1, '#b56962');
+            ctx.fillStyle = upperLipGrad;
+            ctx.fill();
+
+            // Lower lip (fuller, softly lit)
+            ctx.beginPath();
+            ctx.moveTo(462, lipY + 3);
+            ctx.quadraticCurveTo(512, lipY + 7, 562, lipY + 3);
+            ctx.quadraticCurveTo(542, lipY + 28, 512, lipY + 29);
+            ctx.quadraticCurveTo(482, lipY + 28, 462, lipY + 3);
+            ctx.closePath();
+            const lowerLipGrad = ctx.createLinearGradient(512, lipY + 3, 512, lipY + 29);
+            lowerLipGrad.addColorStop(0.0, '#c2736c');
+            lowerLipGrad.addColorStop(0.45, '#da8e86');
+            lowerLipGrad.addColorStop(1.0, '#c97c74');
+            ctx.fillStyle = lowerLipGrad;
+            ctx.fill();
+
+            // Soft lip highlight
+            drawSoftGlow(512, lipY + 15, 26, 6, 'rgba(255, 235, 232, 0.32)');
+
+            // Subtle natural mouth line
+            ctx.strokeStyle = 'rgba(92, 44, 38, 0.62)';
+            ctx.lineWidth = 2.6;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(460, lipY + 3);
+            ctx.quadraticCurveTo(490, lipY + 1, 512, lipY + 4);
+            ctx.quadraticCurveTo(534, lipY + 1, 564, lipY + 3);
+            ctx.stroke();
+            ctx.restore();
+
+            // Soft hair shadow at top of forehead under curtain bangs
+            const foreheadShadow = ctx.createLinearGradient(0, 180, 0, 390);
+            foreheadShadow.addColorStop(0, 'rgba(58, 38, 26, 0.55)');
+            foreheadShadow.addColorStop(1, 'rgba(58, 38, 26, 0.0)');
+            ctx.fillStyle = foreheadShadow;
+            ctx.fillRect(0, 0, 1024, 390);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.anisotropy = 4;
+            return tex;
+        }
+
+        // Realistic Multi-Strand Hair Texture with Caramel/Blonde Highlights
+        function createRealisticHairTexture(isHighlight) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            // Base rich hair tone
+            ctx.fillStyle = isHighlight ? '#7d5534' : '#332218';
+            ctx.fillRect(0, 0, 512, 512);
+
+            // Thousands of fine hair strands
+            for (let i = 0; i < 1600; i++) {
+                const x = Math.random() * 512;
+                const w = 0.8 + Math.random() * 1.8;
+                if (isHighlight) {
+                    const colors = ['#b88454', '#9c6b3f', '#634227', '#cfa06e', '#4d331e'];
+                    ctx.fillStyle = colors[i % colors.length];
+                } else {
+                    const colors = ['#241710', '#3d291d', '#4f3627', '#2c1d14', '#5e412f'];
+                    ctx.fillStyle = colors[i % colors.length];
+                }
+                ctx.globalAlpha = 0.35 + Math.random() * 0.45;
+                ctx.fillRect(x, 0, w, 512);
+            }
+            ctx.globalAlpha = 1.0;
+
+            // Anisotropic sheen band across middle
+            const sheen = ctx.createLinearGradient(0, 0, 0, 512);
+            sheen.addColorStop(0.0, 'rgba(15, 10, 7, 0.45)');
+            sheen.addColorStop(0.45, isHighlight ? 'rgba(245, 208, 165, 0.22)' : 'rgba(160, 115, 85, 0.16)');
+            sheen.addColorStop(1.0, 'rgba(15, 10, 7, 0.35)');
+            ctx.fillStyle = sheen;
+            ctx.fillRect(0, 0, 512, 512);
+
             const tex = new THREE.CanvasTexture(canvas);
             tex.wrapS = THREE.RepeatWrapping;
             tex.wrapT = THREE.RepeatWrapping;
             return tex;
         }
 
-        function init3DModel() {
-            const container = document.getElementById('threeCanvasContainer');
-            if (!container || typeof THREE === 'undefined') return;
+        // Generate the Pink & White Horizontal Striped Knit Texture
+        function createStripedTopTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
 
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(0, 1.35, 4.9);
-            camera.lookAt(0, 0.95, 0);
+            const numStripes = 28;
+            const stripeH = canvas.height / numStripes;
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.shadowMap.enabled = true;
-            container.appendChild(renderer.domElement);
-
-            // Soft Studio & Mall Lighting
-            const ambientLight = new THREE.AmbientLight(0xfff5f8, 0.85);
-            scene.add(ambientLight);
-
-            const mainLight = new THREE.DirectionalLight(0xffffff, 0.85);
-            mainLight.position.set(3, 6, 4);
-            mainLight.castShadow = true;
-            scene.add(mainLight);
-
-            const rimLight = new THREE.DirectionalLight(0xff85b3, 0.45);
-            rimLight.position.set(-4, 3, -3);
-            scene.add(rimLight);
-
-            // Root Group for easy 360 rotation
-            const rootGroup = new THREE.Group();
-            scene.add(rootGroup);
-
-            // --- ESCALATOR BASE & HANDRAIL ---
-            const escalatorGroup = new THREE.Group();
-            rootGroup.add(escalatorGroup);
-
-            const stepMat = new THREE.MeshStandardMaterial({ color: 0x3b3f46, metalness: 0.6, roughness: 0.4 });
-            for (let i = -2; i <= 2; i++) {
-                const stepGeo = new THREE.BoxGeometry(1.7, 0.12, 0.42);
-                const step = new THREE.Mesh(stepGeo, stepMat);
-                step.position.set(0, -0.06 - i * 0.06, i * 0.35);
-                step.receiveShadow = true;
-                escalatorGroup.add(step);
-                escalatorSteps.push(step);
+            for (let i = 0; i < numStripes; i++) {
+                ctx.fillStyle = (i % 2 === 0) ? '#f6bac8' : '#faf6f8';
+                ctx.fillRect(0, i * stripeH, canvas.width, stripeH + 1);
             }
 
-            // Glass side balustrade (left side from viewer, right hand side of Thành)
+            // Subtle fabric knit grain
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.025)';
+            for (let x = 0; x < canvas.width; x += 4) {
+                ctx.fillRect(x, 0, 1, canvas.height);
+            }
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            return texture;
+        }
+
+        // Generate Escalator Grooved Metallic Step Texture with Yellow Safety Borders
+        function createEscalatorStepTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+
+            // Base dark metallic grey
+            ctx.fillStyle = '#4a4e54';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Metal grooves
+            for (let x = 0; x < canvas.width; x += 6) {
+                ctx.fillStyle = (x % 12 === 0) ? '#737882' : '#2e3136';
+                ctx.fillRect(x, 0, 3, canvas.height);
+            }
+
+            // Yellow safety border lines on left, right, and front edge
+            ctx.fillStyle = '#eab308';
+            ctx.fillRect(0, 0, 18, canvas.height);
+            ctx.fillRect(canvas.width - 18, 0, 18, canvas.height);
+            ctx.fillRect(0, canvas.height - 14, canvas.width, 14);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.anisotropy = 4;
+            return tex;
+        }
+
+        // Generate the Cute Pink Cat Sticker on the Escalator Balustrade Glass
+        function createCatStickerTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, 256, 256);
+
+            // Cat head + ears silhouette
+            ctx.save();
+            ctx.translate(128, 135);
+
+            ctx.fillStyle = '#f4a2b8';
+            ctx.strokeStyle = '#3b232a';
+            ctx.lineWidth = 6;
+
+            ctx.beginPath();
+            // Bottom rounded body/head
+            ctx.arc(0, 10, 65, 0, Math.PI, false);
+            // Left ear
+            ctx.lineTo(-65, -20);
+            ctx.lineTo(-55, -75);
+            ctx.lineTo(-18, -48);
+            // Top forehead
+            ctx.lineTo(18, -48);
+            // Right ear
+            ctx.lineTo(55, -75);
+            ctx.lineTo(65, -20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Inner pink ears
+            ctx.fillStyle = '#e07a96';
+            ctx.beginPath();
+            ctx.moveTo(-52, -28);
+            ctx.lineTo(-47, -58);
+            ctx.lineTo(-26, -42);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(52, -28);
+            ctx.lineTo(47, -58);
+            ctx.lineTo(26, -42);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cute dot eyes
+            ctx.fillStyle = '#2d1a20';
+            ctx.beginPath();
+            ctx.arc(-24, -5, 6, 0, Math.PI * 2);
+            ctx.arc(24, -5, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            //Tiny pink nose/mouth
+            ctx.strokeStyle = '#2d1a20';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(-5, 6, 5, 0, Math.PI);
+            ctx.arc(5, 6, 5, 0, Math.PI);
+            ctx.stroke();
+
+            // Whiskers
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(-45, 2); ctx.lineTo(-28, 4);
+            ctx.moveTo(-45, 12); ctx.lineTo(-28, 11);
+            ctx.moveTo(45, 2); ctx.lineTo(28, 4);
+            ctx.moveTo(45, 12); ctx.lineTo(28, 11);
+            ctx.stroke();
+
+            ctx.restore();
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // ==========================================
+        // 3. BUILD THE ESCALATOR DIORAMA (CLEAN, ENCLOSED STEPS)
+        // ==========================================
+        const STEP_WIDTH = 1.35;
+        const STEP_DEPTH = 0.34;
+        const STEP_HEIGHT = 0.21;
+        const NUM_STEPS = 14;
+        const Z_BOT_TRANSITION = -2.55; // Bottom transition into flat landing
+        const Z_TOP_TRANSITION = 0.95;  // Top transition into flat landing
+        const Z_STEP_MIN = -3.10;       // Steps retract cleanly under bottom landing comb
+        const Z_STEP_MAX = 1.66;        // Steps retract cleanly under top landing comb
+
+        // Exact mathematical height profile y(z) shared by both the stairs and the barriers
+        function getEscalatorY(z) {
+            const slope = STEP_HEIGHT / STEP_DEPTH;
+            if (z <= Z_BOT_TRANSITION) {
+                return Z_BOT_TRANSITION * slope;
+            } else if (z >= Z_TOP_TRANSITION) {
+                return Z_TOP_TRANSITION * slope;
+            }
+            return z * slope;
+        }
+
+        function buildEscalatorEnvironment() {
+            const envGroup = new THREE.Group();
+            const stepTex = createEscalatorStepTexture();
+
+            const stepMat = new THREE.MeshStandardMaterial({
+                map: stepTex,
+                roughness: 0.45,
+                metalness: 0.65
+            });
+
+            const riserMat = new THREE.MeshStandardMaterial({
+                color: 0x2b2e33,
+                roughness: 0.5,
+                metalness: 0.7
+            });
+
+            // 1. Escalator Steps strictly bounded within the balustrade span [Z_STEP_MIN, Z_STEP_MAX]
+            for (let i = 0; i < NUM_STEPS; i++) {
+                const stepGroup = new THREE.Group();
+
+                const treadGeo = new THREE.BoxGeometry(STEP_WIDTH, 0.05, STEP_DEPTH);
+                const tread = new THREE.Mesh(treadGeo, stepMat);
+                tread.castShadow = true;
+                tread.receiveShadow = true;
+                stepGroup.add(tread);
+
+                const riserGeo = new THREE.BoxGeometry(STEP_WIDTH * 0.99, STEP_HEIGHT, 0.04);
+                const riser = new THREE.Mesh(riserGeo, riserMat);
+                riser.position.set(0, -STEP_HEIGHT / 2, -STEP_DEPTH / 2 + 0.02);
+                stepGroup.add(riser);
+
+                stepGroup.userData.stepOffset = i;
+                envGroup.add(stepGroup);
+                escalatorSteps.push(stepGroup);
+            }
+
+            updateEscalatorSteps(0);
+
+            // Top & Bottom Metallic Comb Landings (slightly raised so steps slide cleanly underneath)
+            const landingMat = new THREE.MeshStandardMaterial({
+                map: stepTex,
+                roughness: 0.35,
+                metalness: 0.8
+            });
+            const topLanding = new THREE.Mesh(new THREE.BoxGeometry(STEP_WIDTH + 0.16, 0.09, 1.38), landingMat);
+            topLanding.position.set(0, getEscalatorY(Z_TOP_TRANSITION) + 0.005, 1.64);
+            topLanding.receiveShadow = true;
+            envGroup.add(topLanding);
+
+            const botLanding = new THREE.Mesh(new THREE.BoxGeometry(STEP_WIDTH + 0.16, 0.09, 1.28), landingMat);
+            botLanding.position.set(0, getEscalatorY(Z_BOT_TRANSITION) + 0.005, -3.14);
+            botLanding.receiveShadow = true;
+            envGroup.add(botLanding);
+
+            // Yellow Comb Plates at the exact entry/exit seams
+            const combMat = new THREE.MeshStandardMaterial({ color: 0xeab308, roughness: 0.4, metalness: 0.3 });
+            const topComb = new THREE.Mesh(new THREE.BoxGeometry(STEP_WIDTH, 0.025, 0.06), combMat);
+            topComb.position.set(0, getEscalatorY(Z_TOP_TRANSITION) + 0.04, 0.96);
+            envGroup.add(topComb);
+
+            const botComb = new THREE.Mesh(new THREE.BoxGeometry(STEP_WIDTH, 0.025, 0.06), combMat);
+            botComb.position.set(0, getEscalatorY(Z_BOT_TRANSITION) + 0.04, -2.52);
+            envGroup.add(botComb);
+
+            // 2. Perfectly Aligned Balustrades, Skirts & Handrails built along getEscalatorY(z)
             const glassMat = new THREE.MeshPhysicalMaterial({
-                color: 0xdbeafe,
+                color: 0xd8f0ff,
                 transparent: true,
-                opacity: 0.42,
-                roughness: 0.1
+                opacity: 0.44,
+                roughness: 0.08,
+                metalness: 0.05,
+                transmission: 0.5,
+                reflectivity: 0.9
             });
-            const glassPanel = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.05, 1.8), glassMat);
-            glassPanel.position.set(-0.82, 0.48, 0);
-            escalatorGroup.add(glassPanel);
 
-            // Black Escalator Handrail
-            const railMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.3 });
-            const handrail = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 1.88), railMat);
-            handrail.position.set(-0.82, 1.02, 0);
-            escalatorGroup.add(handrail);
+            const metalTrimMat = new THREE.MeshStandardMaterial({
+                color: 0xcbd5e1,
+                roughness: 0.25,
+                metalness: 0.85
+            });
 
-            // Cute Pink Cat Sticker on the glass balustrade (just like in IMG_6962.JPG!)
-            const catSticker = new THREE.Mesh(
-                new THREE.CircleGeometry(0.11, 24),
-                new THREE.MeshBasicMaterial({ color: 0xff85a2, side: THREE.DoubleSide })
-            );
-            catSticker.position.set(-0.78, 0.68, 0.42);
-            catSticker.rotation.y = Math.PI / 2;
-            escalatorGroup.add(catSticker);
+            const darkTrussMat = new THREE.MeshStandardMaterial({
+                color: 0x23262f,
+                roughness: 0.55,
+                metalness: 0.65
+            });
 
-            // --- CHARACTER: NGUYỄN ĐẠO THÀNH ---
+            const rubberRailMat = new THREE.MeshStandardMaterial({
+                color: 0x16181d,
+                roughness: 0.32,
+                metalness: 0.15
+            });
+
+            // Sample points along Z from bottom landing (-3.45) to top landing (+2.05)
+            const zStart = -3.45;
+            const zEnd = 2.05;
+            const railHeight = 0.96;
+
+            // Glass Balustrade Shape (including rounded newel ends at both landings)
+            const glassShape = new THREE.Shape();
+            const rNewel = railHeight / 2; // 0.48m radius for the semicircular ends
+            const yBotLanding = getEscalatorY(zStart);
+            const yTopLanding = getEscalatorY(zEnd);
+
+            // Bottom edge from top landing (u = -zEnd) to bottom landing (u = -zStart)
+            glassShape.moveTo(-zEnd, yTopLanding + 0.06);
+            glassShape.lineTo(-0.95, getEscalatorY(0.95) + 0.06);
+            glassShape.lineTo(2.55, getEscalatorY(-2.55) + 0.06);
+            glassShape.lineTo(-zStart, yBotLanding + 0.06);
+            // Semicircle at bottom landing end
+            glassShape.absarc(-zStart, yBotLanding + 0.06 + rNewel, rNewel, -Math.PI / 2, Math.PI / 2, false);
+            // Top edge from bottom landing back to top landing
+            glassShape.lineTo(2.55, getEscalatorY(-2.55) + 0.06 + railHeight);
+            glassShape.lineTo(-0.95, getEscalatorY(0.95) + 0.06 + railHeight);
+            glassShape.lineTo(-zEnd, yTopLanding + 0.06 + railHeight);
+            // Semicircle at top landing end
+            glassShape.absarc(-zEnd, yTopLanding + 0.06 + rNewel, rNewel, Math.PI / 2, -Math.PI / 2, false);
+
+            const glassExtrudeGeo = new THREE.ExtrudeGeometry(glassShape, {
+                depth: 0.045,
+                bevelEnabled: false,
+                curveSegments: 32
+            });
+            glassExtrudeGeo.rotateY(Math.PI / 2);
+
+            // Metallic Skirt / Deck Shape hugging the steps directly
+            const skirtShape = new THREE.Shape();
+            skirtShape.moveTo(-zEnd - rNewel * 0.6, yTopLanding - 0.38);
+            skirtShape.lineTo(-0.95, getEscalatorY(0.95) - 0.38);
+            skirtShape.lineTo(2.55, getEscalatorY(-2.55) - 0.38);
+            skirtShape.lineTo(-zStart + rNewel * 0.6, yBotLanding - 0.38);
+            skirtShape.lineTo(-zStart + rNewel * 0.6, yBotLanding + 0.08);
+            skirtShape.lineTo(2.55, getEscalatorY(-2.55) + 0.08);
+            skirtShape.lineTo(-0.95, getEscalatorY(0.95) + 0.08);
+            skirtShape.lineTo(-zEnd - rNewel * 0.6, yTopLanding + 0.08);
+            skirtShape.closePath();
+
+            const skirtExtrudeGeo = new THREE.ExtrudeGeometry(skirtShape, {
+                depth: 0.14,
+                bevelEnabled: true,
+                bevelSize: 0.01,
+                bevelThickness: 0.01
+            });
+            skirtExtrudeGeo.rotateY(Math.PI / 2);
+
+            // Build Continuous 3D Handrail Curve wrapping around the exact top & newel ends of the glass
+            function createHandrailMesh(xCenter) {
+                const pts = [];
+                pts.push(new THREE.Vector3(xCenter, yBotLanding + 0.06 + railHeight, zStart));
+                pts.push(new THREE.Vector3(xCenter, getEscalatorY(-2.55) + 0.06 + railHeight, -2.55));
+                pts.push(new THREE.Vector3(xCenter, getEscalatorY(0.95) + 0.06 + railHeight, 0.95));
+                pts.push(new THREE.Vector3(xCenter, yTopLanding + 0.06 + railHeight, zEnd));
+
+                const cyTop = yTopLanding + 0.06 + rNewel;
+                for (let a = 1; a <= 12; a++) {
+                    const ang = (Math.PI / 2) - (a / 12) * Math.PI;
+                    pts.push(new THREE.Vector3(
+                        xCenter,
+                        cyTop + Math.sin(ang) * rNewel,
+                        zEnd + Math.cos(ang) * rNewel
+                    ));
+                }
+
+                const cyBot = yBotLanding + 0.06 + rNewel;
+                const botPts = [];
+                for (let a = 0; a <= 12; a++) {
+                    const ang = (Math.PI / 2) + (a / 12) * Math.PI;
+                    botPts.push(new THREE.Vector3(
+                        xCenter,
+                        cyBot + Math.sin(ang) * rNewel,
+                        zStart - Math.cos(ang) * rNewel
+                    ));
+                }
+
+                const localCurve = new THREE.CurvePath();
+                const allPts = [...botPts.slice().reverse(), ...pts];
+                for (let i = 0; i < allPts.length - 1; i++) {
+                    localCurve.add(new THREE.LineCurve3(allPts[i], allPts[i + 1]));
+                }
+                const railTubeGeo = new THREE.TubeGeometry(localCurve, 120, 0.044, 16, false);
+                const railMesh = new THREE.Mesh(railTubeGeo, rubberRailMat);
+                railMesh.castShadow = true;
+                return railMesh;
+            }
+
+            [-1, 1].forEach((side) => {
+                const xPos = side * (STEP_WIDTH / 2 + 0.07);
+
+                // Skirt
+                const skirtMesh = new THREE.Mesh(skirtExtrudeGeo, metalTrimMat);
+                skirtMesh.position.set(xPos - 0.07, 0, 0);
+                skirtMesh.receiveShadow = true;
+                envGroup.add(skirtMesh);
+
+                // Glass Balustrade
+                const glassMesh = new THREE.Mesh(glassExtrudeGeo, glassMat);
+                glassMesh.position.set(xPos - 0.0225, 0, 0);
+                envGroup.add(glassMesh);
+
+                // Glowing blue-white LED strip along inner base of glass
+                const ledPts = [
+                    new THREE.Vector3(xPos - side * 0.045, yBotLanding + 0.07, zStart),
+                    new THREE.Vector3(xPos - side * 0.045, getEscalatorY(-2.55) + 0.07, -2.55),
+                    new THREE.Vector3(xPos - side * 0.045, getEscalatorY(0.95) + 0.07, 0.95),
+                    new THREE.Vector3(xPos - side * 0.045, yTopLanding + 0.07, zEnd)
+                ];
+                const ledPath = new THREE.CurvePath();
+                for (let i = 0; i < ledPts.length - 1; i++) {
+                    ledPath.add(new THREE.LineCurve3(ledPts[i], ledPts[i + 1]));
+                }
+                const ledGeo = new THREE.TubeGeometry(ledPath, 40, 0.016, 8, false);
+                const ledMesh = new THREE.Mesh(ledGeo, new THREE.MeshBasicMaterial({ color: 0xe0f2fe }));
+                envGroup.add(ledMesh);
+
+                // Black Rubber Handrail aligned with top of glass
+                envGroup.add(createHandrailMesh(xPos));
+            });
+
+            // Full-Length Structural Under-Step Truss Enclosure (extended past both landings so no steps ever poke out)
+            const underShape = new THREE.Shape();
+            underShape.moveTo(-zEnd - 0.32, yTopLanding - 0.42);
+            underShape.lineTo(-0.95, getEscalatorY(0.95) - 0.42);
+            underShape.lineTo(2.55, getEscalatorY(-2.55) - 0.42);
+            underShape.lineTo(-zStart + 0.32, yBotLanding - 0.42);
+            underShape.lineTo(-zStart + 0.32, yBotLanding + 0.02);
+            underShape.lineTo(2.55, getEscalatorY(-2.55) - 0.02);
+            underShape.lineTo(-0.95, getEscalatorY(0.95) - 0.02);
+            underShape.lineTo(-zEnd - 0.32, yTopLanding + 0.02);
+            underShape.closePath();
+
+            const underGeo = new THREE.ExtrudeGeometry(underShape, {
+                depth: STEP_WIDTH + 0.16,
+                bevelEnabled: false
+            });
+            underGeo.rotateY(Math.PI / 2);
+            const underMesh = new THREE.Mesh(underGeo, darkTrussMat);
+            underMesh.position.set(-(STEP_WIDTH + 0.16) / 2, 0, 0);
+            envGroup.add(underMesh);
+
+            // Cute Pink Cat Sticker on the inner side of the character's right balustrade (-X side)
+            const stickerTex = createCatStickerTexture();
+            const stickerMat = new THREE.MeshBasicMaterial({
+                map: stickerTex,
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            const stickerPlane = new THREE.Mesh(new THREE.PlaneGeometry(0.19, 0.19), stickerMat);
+            stickerPlane.position.set(-(STEP_WIDTH / 2 + 0.044), getEscalatorY(0.32) + 0.56, 0.32);
+            stickerPlane.rotation.y = Math.PI / 2;
+            envGroup.add(stickerPlane);
+
+            scene.add(envGroup);
+        }
+
+        // Update Escalator Steps Position & Retract Cleanly Inside Landings
+        function updateEscalatorSteps(timeOffset) {
+            escalatorSteps.forEach((step) => {
+                let progress = (step.userData.stepOffset + timeOffset) % NUM_STEPS;
+                if (progress < 0) progress += NUM_STEPS;
+
+                // Map progress [0, NUM_STEPS] strictly within [Z_STEP_MIN, Z_STEP_MAX]
+                const zPos = Z_STEP_MIN + progress * STEP_DEPTH;
+                let yPos = getEscalatorY(zPos);
+
+                // Smoothly tuck steps below the top and bottom comb plates so they never poke outside
+                if (zPos > Z_TOP_TRANSITION) {
+                    const tTop = (zPos - Z_TOP_TRANSITION) / (Z_STEP_MAX - Z_TOP_TRANSITION);
+                    yPos -= tTop * 0.14;
+                } else if (zPos < Z_BOT_TRANSITION) {
+                    const tBot = (Z_BOT_TRANSITION - zPos) / (Z_BOT_TRANSITION - Z_STEP_MIN);
+                    yPos -= tBot * 0.14;
+                }
+
+                step.position.set(0, yPos, zPos);
+            });
+        }
+
+        // ==========================================
+        // 4. ANATOMICALLY SCULPTED REALISTIC HEAD GEOMETRY
+        // ==========================================
+        function createSculptedHeadGeometry(faceTexture) {
+            const geo = new THREE.SphereGeometry(0.132, 96, 96);
+            const pos = geo.attributes.position;
+            const uv = geo.attributes.uv;
+            const v = new THREE.Vector3();
+
+            for (let i = 0; i < pos.count; i++) {
+                v.fromBufferAttribute(pos, i);
+
+                // Normalize coordinates to [-1, 1] unit sphere for anatomical sculpting
+                const nx = v.x / 0.132;
+                const ny = v.y / 0.132;
+                const nz = v.z / 0.132;
+
+                // Overall East Asian youth skull proportions
+                let sx = nx * 0.91;
+                let sy = ny * 1.13;
+                let sz = nz * 0.97;
+
+                // Taper lower face into realistic jawline & chin (ny < 0)
+                if (ny < 0) {
+                    const jawTaper = Math.pow(-ny, 1.35);
+                    sx *= (1.0 - 0.30 * jawTaper);
+                    sz *= (1.0 - 0.16 * jawTaper);
+                    // Bring chin slightly forward
+                    if (nz > 0) {
+                        sz += 0.07 * Math.exp(-Math.pow(nx / 0.32, 2) - Math.pow((ny + 0.72) / 0.25, 2));
+                    }
+                }
+
+                // Flatten back of skull slightly for natural cranium
+                if (nz < -0.2) {
+                    sz *= 0.92;
+                }
+
+                // Detailed Front Facial Topology (nz > 0)
+                if (nz > 0.15) {
+                    const frontMask = Math.max(0, (nz - 0.15) / 0.85);
+
+                    // 1. Subtle Brow Ridge (ny ~ 0.24)
+                    const browBump = 0.042 * Math.exp(-Math.pow((ny - 0.24) / 0.11, 2) - Math.pow(nx / 0.58, 4));
+
+                    // 2. Eye Sockets & Gentle Eyelid Fullness (nx ~ ±0.31, ny ~ 0.08)
+                    const leftEyeDist = Math.pow((nx + 0.31) / 0.19, 2) + Math.pow((ny - 0.08) / 0.13, 2);
+                    const rightEyeDist = Math.pow((nx - 0.31) / 0.19, 2) + Math.pow((ny - 0.08) / 0.13, 2);
+                    const eyeSocket = -0.048 * (Math.exp(-leftEyeDist) + Math.exp(-rightEyeDist));
+                    const eyeballMount = 0.028 * (
+                        Math.exp(-Math.pow((nx + 0.30) / 0.12, 2) - Math.pow((ny - 0.07) / 0.07, 2)) +
+                        Math.exp(-Math.pow((nx - 0.30) / 0.12, 2) - Math.pow((ny - 0.07) / 0.07, 2))
+                    );
+
+                    // 3. Sculpted Nose Bridge, Rounded Tip & Nostril Wings (ny from 0.12 down to -0.22)
+                    let noseProtrusion = 0;
+                    if (ny < 0.20 && ny > -0.28) {
+                        const tNose = (0.16 - ny) / 0.34; // 0 at bridge top, 1 at nasal tip
+                        const clampedT = Math.max(0, Math.min(1.15, tNose));
+                        const bridgeProfile = Math.sin(Math.min(1, clampedT) * Math.PI * 0.68);
+                        const widthAtY = 0.095 + 0.065 * Math.pow(Math.max(0, clampedT), 1.6);
+                        const lateralFalloff = Math.exp(-Math.pow(nx / widthAtY, 2));
+                        const verticalCutoff = ny < -0.18 ? Math.exp(-Math.pow((ny + 0.18) / 0.06, 2)) : 1.0;
+                        noseProtrusion = 0.155 * bridgeProfile * lateralFalloff * verticalCutoff;
+                    }
+
+                    // 4. Soft Cheekbone & Mid-Cheek Fullness
+                    const cheekFullness = 0.045 * (
+                        Math.exp(-Math.pow((nx + 0.42) / 0.28, 2) - Math.pow((ny + 0.08) / 0.26, 2)) +
+                        Math.exp(-Math.pow((nx - 0.42) / 0.28, 2) - Math.pow((ny + 0.08) / 0.26, 2))
+                    );
+
+                    // 5. Sculpted Upper & Lower Lips (ny ~ -0.38)
+                    const upperLip = 0.052 * Math.exp(-Math.pow(nx / 0.22, 2) - Math.pow((ny + 0.34) / 0.055, 2));
+                    const lowerLip = 0.058 * Math.exp(-Math.pow(nx / 0.20, 2) - Math.pow((ny + 0.43) / 0.06, 2));
+                    const mouthPart = -0.022 * Math.exp(-Math.pow(nx / 0.21, 2) - Math.pow((ny + 0.385) / 0.018, 2));
+                    const chinCleft = -0.025 * Math.exp(-Math.pow(nx / 0.22, 2) - Math.pow((ny + 0.53) / 0.05, 2));
+
+                    sz += frontMask * (browBump + eyeSocket + eyeballMount + noseProtrusion + cheekFullness + upperLip + lowerLip + mouthPart + chinCleft);
+                }
+
+                pos.setXYZ(i, sx * 0.132, sy * 0.132, sz * 0.132);
+
+                // Planar-cylindrical hybrid UV mapping so the high-res portrait texture aligns distortion-free
+                const u = 0.5 + (sx * 0.42);
+                const vCoord = 0.50 + (sy * 0.38);
+                uv.setXY(i, Math.max(0.01, Math.min(0.99, u)), Math.max(0.01, Math.min(0.99, vCoord)));
+            }
+
+            geo.computeVertexNormals();
+            return geo;
+        }
+
+        // ==========================================
+        // 5. BUILD THE 3D CHARACTER MODEL
+        // ==========================================
+        function buildCharacterModel() {
             characterGroup = new THREE.Group();
-            rootGroup.add(characterGroup);
+            // Position character standing on step (0, 0, 0), facing +Z (top of escalator)
+            characterGroup.position.set(0.04, 0.025, 0);
+            characterGroup.rotation.y = -0.15;
 
-            const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdfd1, roughness: 0.55 });
-            const sockMat = new THREE.MeshStandardMaterial({ color: 0x141418, roughness: 0.7 });
-            const shoeMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35 });
-            const pinkMat = new THREE.MeshStandardMaterial({ color: 0xff9ebb, roughness: 0.4 });
-            const stripeTopMat = new THREE.MeshStandardMaterial({
-                map: createStripedCropTopTexture(),
-                roughness: 0.6
+            // Shared Materials
+            const skinMat = new THREE.MeshStandardMaterial({
+                color: 0xecc1a8,
+                roughness: 0.52,
+                metalness: 0.03
             });
 
-            // 1. White Sneakers with Pink Cat-Face Tongues
-            [-0.17, 0.17].forEach(xPos => {
-                const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.13, 0.34), shoeMat);
-                shoe.position.set(xPos, 0.07, 0.05);
-                characterGroup.add(shoe);
-
-                // Cute pink cat tongue accent on sneaker
-                const catTongue = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.04), pinkMat);
-                catTongue.position.set(xPos, 0.15, 0.12);
-                characterGroup.add(catTongue);
-
-                // Black Thigh-High Socks
-                const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.082, 0.068, 0.54, 20), sockMat);
-                sock.position.set(xPos, 0.38, 0);
-                characterGroup.add(sock);
-
-                // Upper Thigh Skin (Absolute Territory gap above thigh-highs)
-                const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.084, 0.16, 20), skinMat);
-                thigh.position.set(xPos, 0.71, 0);
-                characterGroup.add(thigh);
+            const stripedTex = createStripedTopTexture();
+            const topMat = new THREE.MeshStandardMaterial({
+                map: stripedTex,
+                roughness: 0.75,
+                metalness: 0.02
             });
 
-            // 2. Black Pleated Mini Skirt
+            const pinkRibMat = new THREE.MeshStandardMaterial({
+                color: 0xf4b2c4,
+                roughness: 0.65,
+                metalness: 0.05
+            });
+
+            const blackFabricMat = new THREE.MeshStandardMaterial({
+                color: 0x16171b,
+                roughness: 0.82,
+                metalness: 0.05
+            });
+
+            const sockMat = new THREE.MeshStandardMaterial({
+                color: 0x111216,
+                roughness: 0.85,
+                metalness: 0.03
+            });
+
+            const backpackMat = new THREE.MeshStandardMaterial({
+                color: 0x141519,
+                roughness: 0.72,
+                metalness: 0.08
+            });
+
+            const silverMat = new THREE.MeshStandardMaterial({
+                color: 0xe2e8f0,
+                roughness: 0.18,
+                metalness: 0.92
+            });
+
+            // ------------------------------------------
+            // A. SHOES (White Sneakers with Pink Stripes & Cat-Ear Tongue)
+            // ------------------------------------------
+            function createSneaker(isLeft) {
+                const shoeGroup = new THREE.Group();
+                const whiteLeather = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
+                const soleMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.65 });
+                const pinkAccent = new THREE.MeshStandardMaterial({ color: 0xf5b8c8, roughness: 0.5 });
+
+                // Rubber outsole
+                const soleGeo = new THREE.BoxGeometry(0.145, 0.042, 0.30);
+                const sole = new THREE.Mesh(soleGeo, soleMat);
+                sole.position.set(0, 0.021, 0.04);
+                sole.castShadow = true;
+                shoeGroup.add(sole);
+
+                // Rounded toe cap
+                const toeGeo = new THREE.SphereGeometry(0.072, 20, 16);
+                toeGeo.scale(1.0, 0.65, 1.35);
+                const toe = new THREE.Mesh(toeGeo, whiteLeather);
+                toe.position.set(0, 0.05, 0.11);
+                toe.castShadow = true;
+                shoeGroup.add(toe);
+
+                // Main shoe body
+                const bodyGeo = new THREE.CylinderGeometry(0.068, 0.073, 0.18, 20);
+                bodyGeo.rotateX(Math.PI / 2);
+                const body = new THREE.Mesh(bodyGeo, whiteLeather);
+                body.position.set(0, 0.068, 0.02);
+                body.castShadow = true;
+                shoeGroup.add(body);
+
+                // Pastel pink heel tab (seen in side/back photos)
+                const heelGeo = new THREE.SphereGeometry(0.066, 16, 12);
+                heelGeo.scale(0.95, 0.9, 0.6);
+                const heel = new THREE.Mesh(heelGeo, pinkAccent);
+                heel.position.set(0, 0.095, -0.072);
+                shoeGroup.add(heel);
+
+                // Two subtle pastel pink side stripes on each side
+                [-1, 1].forEach((s) => {
+                    for (let st = 0; st < 2; st++) {
+                        const stripeGeo = new THREE.BoxGeometry(0.008, 0.055, 0.022);
+                        const stripe = new THREE.Mesh(stripeGeo, pinkAccent);
+                        stripe.position.set(s * 0.07, 0.065, 0.03 + st * 0.038);
+                        stripe.rotation.x = -0.25;
+                        shoeGroup.add(stripe);
+                    }
+                });
+
+                // White laces
+                for (let l = 0; l < 4; l++) {
+                    const laceGeo = new THREE.BoxGeometry(0.085, 0.012, 0.014);
+                    const lace = new THREE.Mesh(laceGeo, whiteLeather);
+                    lace.position.set(0, 0.102 - l * 0.008, 0.05 + l * 0.028);
+                    shoeGroup.add(lace);
+                }
+
+                // Cute Cat-Ear Tongue Detail (visible in Photo 1!)
+                const tongueGeo = new THREE.BoxGeometry(0.085, 0.055, 0.018);
+                const tongue = new THREE.Mesh(tongueGeo, whiteLeather);
+                tongue.position.set(0, 0.125, 0.032);
+                tongue.rotation.x = -0.35;
+                shoeGroup.add(tongue);
+
+                // Little pink cat ears on top of the tongue
+                [-1, 1].forEach((earSide) => {
+                    const earGeo = new THREE.ConeGeometry(0.018, 0.028, 4);
+                    const ear = new THREE.Mesh(earGeo, pinkAccent);
+                    ear.position.set(earSide * 0.026, 0.152, 0.025);
+                    ear.rotation.x = -0.2;
+                    shoeGroup.add(ear);
+                });
+
+                return shoeGroup;
+            }
+
+            // Right Leg & Shoe (character's right side = -X)
+            const rightShoe = createSneaker(false);
+            rightShoe.position.set(-0.11, 0, -0.02);
+            rightShoe.rotation.y = -0.12;
+            characterGroup.add(rightShoe);
+
+            // Left Leg & Shoe (character's left side = +X, slightly forward & knee subtly relaxed)
+            const leftShoe = createSneaker(true);
+            leftShoe.position.set(0.09, 0, 0.05);
+            leftShoe.rotation.y = 0.14;
+            characterGroup.add(leftShoe);
+
+            // ------------------------------------------
+            // B. LEGS & BLACK OVER-THE-KNEE SOCKS
+            // ------------------------------------------
+            function createLeg(xPos, zFoot, kneeBendZ) {
+                const legGroup = new THREE.Group();
+
+                // Lower leg (calf in black thigh-high sock)
+                const calfGeo = new THREE.CylinderGeometry(0.068, 0.048, 0.46, 24);
+                const calf = new THREE.Mesh(calfGeo, sockMat);
+                calf.position.set(xPos, 0.31, (zFoot + kneeBendZ) / 2);
+                calf.rotation.x = (kneeBendZ - zFoot) * 1.1;
+                calf.castShadow = true;
+                legGroup.add(calf);
+
+                // Knee joint (inside black sock)
+                const kneeGeo = new THREE.SphereGeometry(0.068, 20, 16);
+                const knee = new THREE.Mesh(kneeGeo, sockMat);
+                knee.position.set(xPos, 0.54, kneeBendZ);
+                legGroup.add(knee);
+
+                // Upper sock cuff (over-the-knee)
+                const sockTopGeo = new THREE.CylinderGeometry(0.075, 0.068, 0.15, 24);
+                const sockTop = new THREE.Mesh(sockTopGeo, sockMat);
+                sockTop.position.set(xPos, 0.61, kneeBendZ * 0.8);
+                sockTop.castShadow = true;
+                legGroup.add(sockTop);
+
+                // Bare upper thigh (skin tone between sock top and mini skirt)
+                const thighGeo = new THREE.CylinderGeometry(0.088, 0.075, 0.24, 24);
+                const thigh = new THREE.Mesh(thighGeo, skinMat);
+                thigh.position.set(xPos, 0.78, kneeBendZ * 0.35);
+                thigh.castShadow = true;
+                legGroup.add(thigh);
+
+                return legGroup;
+            }
+
+            characterGroup.add(createLeg(-0.10, -0.02, 0.01));
+            characterGroup.add(createLeg(0.09, 0.04, 0.07));
+
+            // ------------------------------------------
+            // C. BREATHING UPPER BODY GROUP (Skirt, Torso, Backpack, Arms, Head)
+            // ------------------------------------------
+            breathingGroup = new THREE.Group();
+            characterGroup.add(breathingGroup);
+
+            // 1. High-Waisted Black Box-Pleated Mini Skirt
             const skirtGroup = new THREE.Group();
-            skirtGroup.position.set(0, 0.88, 0);
-            characterGroup.add(skirtGroup);
+            skirtGroup.position.set(0, 0.98, 0.01);
 
-            const skirtBase = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.33, 0.34, 24), sockMat);
-            skirtGroup.add(skirtBase);
+            // Waistband
+            const waistbandGeo = new THREE.CylinderGeometry(0.165, 0.175, 0.065, 32);
+            waistbandGeo.scale(1.0, 1.0, 0.78);
+            const waistband = new THREE.Mesh(waistbandGeo, blackFabricMat);
+            waistband.position.y = 0.11;
+            waistband.castShadow = true;
+            skirtGroup.add(waistband);
 
-            // Individual Pleats around the skirt
-            const pleatCount = 16;
-            for (let i = 0; i < pleatCount; i++) {
-                const angle = (i / pleatCount) * Math.PI * 2;
-                const pleat = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.33, 0.05), sockMat);
-                pleat.position.set(Math.cos(angle) * 0.26, -0.01, Math.sin(angle) * 0.26);
-                pleat.rotation.y = -angle;
-                pleat.rotation.z = 0.22;
+            // Inner skirt base cone
+            const skirtCoreGeo = new THREE.CylinderGeometry(0.17, 0.28, 0.30, 32);
+            skirtCoreGeo.scale(1.0, 1.0, 0.80);
+            const skirtCore = new THREE.Mesh(skirtCoreGeo, blackFabricMat);
+            skirtCore.position.y = -0.05;
+            skirtCore.castShadow = true;
+            skirtGroup.add(skirtCore);
+
+            // Individual 3D Box Pleats around the skirt for crisp silhouette & shadow creases
+            const numPleats = 18;
+            for (let p = 0; p < numPleats; p++) {
+                const angle = (p / numPleats) * Math.PI * 2;
+                const pleatGeo = new THREE.BoxGeometry(0.082, 0.30, 0.026);
+                const pleat = new THREE.Mesh(pleatGeo, blackFabricMat);
+
+                const radiusTop = 0.172;
+                const radiusBot = 0.285;
+                const avgR = (radiusTop + radiusBot) / 2;
+
+                const px = Math.sin(angle) * avgR;
+                const pz = Math.cos(angle) * avgR * 0.80;
+
+                pleat.position.set(px, -0.05, pz);
+                // Angle each pleat slightly for authentic knife/box pleat overlap
+                pleat.rotation.y = Math.atan2(px, pz) + 0.18;
+
+                // Tilt outward to match A-line flare
+                const tilt = 0.32;
+                pleat.rotation.x = Math.cos(angle) * tilt;
+                pleat.rotation.z = -Math.sin(angle) * tilt;
+
+                pleat.castShadow = true;
+                pleat.receiveShadow = true;
                 skirtGroup.add(pleat);
             }
+            breathingGroup.add(skirtGroup);
 
-            // 3. Subtle Midriff Waist
-            const midriff = new THREE.Mesh(new THREE.CylinderGeometry(0.185, 0.195, 0.11, 20), skinMat);
-            midriff.position.set(0, 1.08, 0);
-            characterGroup.add(midriff);
+            // 2. Subtle Midriff (visible between black skirt waistband and pink crop top hem)
+            const midriffGeo = new THREE.CylinderGeometry(0.158, 0.163, 0.06, 28);
+            midriffGeo.scale(1.0, 1.0, 0.74);
+            const midriff = new THREE.Mesh(midriffGeo, skinMat);
+            midriff.position.set(0, 1.155, 0.01);
+            midriff.castShadow = true;
+            breathingGroup.add(midriff);
 
-            // 4. Pink & White Horizontal Striped Crop Top
-            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.20, 0.42, 24), stripeTopMat);
-            torso.position.set(0, 1.33, 0);
-            characterGroup.add(torso);
+            // 3. Pink & White Striped Long-Sleeve Crop Top
+            const torsoGroup = new THREE.Group();
+            torsoGroup.position.set(0, 1.36, 0.01);
 
-            // Pink crew-neck collar trim
-            const collarTrim = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.022, 12, 28), pinkMat);
-            collarTrim.position.set(0, 1.54, 0);
-            collarTrim.rotation.x = Math.PI / 2;
-            characterGroup.add(collarTrim);
+            // Ribbed pastel pink bottom hem of crop top
+            const bottomHemGeo = new THREE.CylinderGeometry(0.168, 0.165, 0.032, 32);
+            bottomHemGeo.scale(1.0, 1.0, 0.76);
+            const bottomHem = new THREE.Mesh(bottomHemGeo, pinkRibMat);
+            bottomHem.position.y = -0.165;
+            torsoGroup.add(bottomHem);
 
-            // 5. Black Backpack & Shoulder Straps
-            const backpackMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.7 });
-            const backpack = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.42, 0.18), backpackMat);
-            backpack.position.set(0, 1.32, -0.22);
-            characterGroup.add(backpack);
+            // Main striped torso
+            const chestGeo = new THREE.CylinderGeometry(0.195, 0.168, 0.33, 32);
+            chestGeo.scale(1.0, 1.0, 0.76);
+            const chest = new THREE.Mesh(chestGeo, topMat);
+            chest.castShadow = true;
+            chest.receiveShadow = true;
+            torsoGroup.add(chest);
 
-            [-0.16, 0.16].forEach(xPos => {
-                const strap = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.43, 0.24), backpackMat);
-                strap.position.set(xPos, 1.34, 0.01);
-                characterGroup.add(strap);
+            // Rounded shoulders cap
+            const shoulderCapGeo = new THREE.SphereGeometry(0.195, 28, 16);
+            shoulderCapGeo.scale(1.05, 0.35, 0.75);
+            const shoulderCap = new THREE.Mesh(shoulderCapGeo, topMat);
+            shoulderCap.position.y = 0.16;
+            torsoGroup.add(shoulderCap);
+
+            // Solid pastel pink crew-neck collar ring
+            const collarGeo = new THREE.TorusGeometry(0.095, 0.018, 16, 32);
+            collarGeo.rotateX(Math.PI / 2 + 0.12);
+            collarGeo.scale(1.05, 1.0, 0.92);
+            const collar = new THREE.Mesh(collarGeo, pinkRibMat);
+            collar.position.set(0, 0.21, 0.01);
+            torsoGroup.add(collar);
+
+            breathingGroup.add(torsoGroup);
+
+            // 4. Black Backpack & Shoulder Straps (Crucial for Front & Back Angle #5!)
+            const backpackGroup = new THREE.Group();
+            backpackGroup.position.set(0, 1.35, -0.14);
+
+            // Main sculpted backpack body
+            const packBodyGeo = new THREE.BoxGeometry(0.32, 0.39, 0.16);
+            const packBody = new THREE.Mesh(packBodyGeo, backpackMat);
+            packBody.position.set(0, -0.02, -0.08);
+            packBody.castShadow = true;
+            backpackGroup.add(packBody);
+
+            // Rounded dome top of backpack
+            const packTopGeo = new THREE.CylinderGeometry(0.16, 0.16, 0.16, 24, 1, false, 0, Math.PI);
+            packTopGeo.rotateZ(Math.PI / 2);
+            packTopGeo.rotateY(Math.PI / 2);
+            const packTop = new THREE.Mesh(packTopGeo, backpackMat);
+            packTop.position.set(0, 0.175, -0.08);
+            packTop.castShadow = true;
+            backpackGroup.add(packTop);
+
+            // Front lower pocket of the backpack (visible in Photo 5)
+            const pocketGeo = new THREE.BoxGeometry(0.27, 0.18, 0.065);
+            const pocket = new THREE.Mesh(pocketGeo, backpackMat);
+            pocket.position.set(0, -0.10, -0.175);
+            pocket.castShadow = true;
+            backpackGroup.add(pocket);
+
+            // Small White Rectangular Brand Patch on the bottom-left of the pocket (seen clearly in Photo 5!)
+            const patchGeo = new THREE.BoxGeometry(0.048, 0.028, 0.008);
+            const patchMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.5 });
+            const brandPatch = new THREE.Mesh(patchGeo, patchMat);
+            brandPatch.position.set(0.045, -0.155, -0.208);
+            backpackGroup.add(brandPatch);
+
+            // Top hanging loop handle
+            const loopGeo = new THREE.TorusGeometry(0.038, 0.009, 12, 24, Math.PI);
+            const loop = new THREE.Mesh(loopGeo, backpackMat);
+            loop.position.set(0, 0.25, -0.03);
+            backpackGroup.add(loop);
+
+            // Dual Black Shoulder Straps wrapping over the front of the striped top
+            [-1, 1].forEach((s) => {
+                const strapCurve = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(s * 0.08, 0.22, -0.02),
+                    new THREE.Vector3(s * 0.135, 0.23, 0.10),
+                    new THREE.Vector3(s * 0.155, 0.08, 0.285),
+                    new THREE.Vector3(s * 0.165, -0.12, 0.27),
+                    new THREE.Vector3(s * 0.155, -0.18, 0.02)
+                ]);
+                const strapGeo = new THREE.TubeGeometry(strapCurve, 28, 0.024, 8, false);
+                strapGeo.scale(1.3, 1.0, 0.55);
+                const strap = new THREE.Mesh(strapGeo, backpackMat);
+                strap.castShadow = true;
+                backpackGroup.add(strap);
+
+                // Dangling black adjustment webbing tail (seen on both sides in Photo 1 & 5)
+                const tailGeo = new THREE.BoxGeometry(0.016, 0.14, 0.008);
+                const tail = new THREE.Mesh(tailGeo, backpackMat);
+                tail.position.set(s * 0.185, -0.14, 0.16);
+                tail.rotation.z = s * 0.12;
+                backpackGroup.add(tail);
             });
 
-            // 6. Long Striped Sleeves & Hands (Right arm resting on the escalator handrail!)
-            // Right arm (viewer's left, reaching to the handrail)
-            const rightSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.48, 16), stripeTopMat);
-            rightSleeve.position.set(-0.38, 1.28, 0.05);
-            rightSleeve.rotation.z = -0.68;
-            characterGroup.add(rightSleeve);
+            breathingGroup.add(backpackGroup);
 
-            const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), skinMat);
-            rightHand.position.set(-0.56, 1.09, 0.08);
-            characterGroup.add(rightHand);
+            // ------------------------------------------
+            // D. ARMS & HANDS (Right arm reaching to handrail, Left arm relaxed by side)
+            // ------------------------------------------
+            // 1. Character's Right Arm (-X side, extended onto the aligned escalator handrail)
+            const rightArmCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.18, 1.50, 0.01),
+                new THREE.Vector3(-0.34, 1.32, 0.06),
+                new THREE.Vector3(-0.56, 1.15, 0.13)
+            ]);
+            const rightSleeveGeo = new THREE.TubeGeometry(rightArmCurve, 24, 0.056, 16, false);
+            const rightSleeve = new THREE.Mesh(rightSleeveGeo, topMat);
+            rightSleeve.castShadow = true;
+            breathingGroup.add(rightSleeve);
 
-            // Left arm (viewer's right, relaxed by the skirt)
-            const leftSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.48, 16), stripeTopMat);
-            leftSleeve.position.set(0.28, 1.24, 0);
-            leftSleeve.rotation.z = 0.16;
-            characterGroup.add(leftSleeve);
+            // Pink ribbed cuff on right wrist
+            const rightCuffGeo = new THREE.CylinderGeometry(0.052, 0.046, 0.055, 20);
+            const rightCuff = new THREE.Mesh(rightCuffGeo, pinkRibMat);
+            rightCuff.position.set(-0.59, 1.13, 0.14);
+            rightCuff.rotation.z = -0.88;
+            rightCuff.rotation.x = 0.2;
+            breathingGroup.add(rightCuff);
 
-            const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.058, 16, 16), skinMat);
-            leftHand.position.set(0.32, 0.99, 0.02);
-            characterGroup.add(leftHand);
+            // Right hand resting flush on the aligned black handrail
+            const rightHandGroup = new THREE.Group();
+            rightHandGroup.position.set(-0.69, 1.105, 0.16);
+            rightHandGroup.rotation.set(0.45, 0.15, -0.10);
 
-            // 7. Neck + Pink Heart Choker
-            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.095, 0.15, 20), skinMat);
-            neck.position.set(0, 1.60, 0);
-            characterGroup.add(neck);
+            const palmGeo = new THREE.SphereGeometry(0.044, 16, 12);
+            palmGeo.scale(1.2, 0.45, 1.35);
+            const rightPalm = new THREE.Mesh(palmGeo, skinMat);
+            rightHandGroup.add(rightPalm);
 
-            const chokerBand = new THREE.Mesh(new THREE.TorusGeometry(0.092, 0.018, 12, 28), pinkMat);
-            chokerBand.position.set(0, 1.60, 0);
-            chokerBand.rotation.x = Math.PI / 2;
-            characterGroup.add(chokerBand);
+            // Fingers resting on rail
+            for (let f = -1.5; f <= 1.5; f++) {
+                const fingerGeo = new THREE.CylinderGeometry(0.008, 0.007, 0.055, 8);
+                fingerGeo.rotateZ(Math.PI / 2);
+                const finger = new THREE.Mesh(fingerGeo, skinMat);
+                finger.position.set(-0.045, -0.005, f * 0.014);
+                finger.rotation.z = 0.25;
+                rightHandGroup.add(finger);
+            }
+            breathingGroup.add(rightHandGroup);
 
-            const silverMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.2 });
-            const heartRing = new THREE.Mesh(new THREE.TorusGeometry(0.028, 0.007, 10, 20), silverMat);
-            heartRing.position.set(0, 1.60, 0.105);
-            characterGroup.add(heartRing);
+            // 2. Character's Left Arm (+X side, hanging naturally along the skirt)
+            const leftArmCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0.18, 1.50, 0.01),
+                new THREE.Vector3(0.23, 1.28, -0.02),
+                new THREE.Vector3(0.22, 1.03, 0.02)
+            ]);
+            const leftSleeveGeo = new THREE.TubeGeometry(leftArmCurve, 24, 0.056, 16, false);
+            const leftSleeve = new THREE.Mesh(leftSleeveGeo, topMat);
+            leftSleeve.castShadow = true;
+            breathingGroup.add(leftSleeve);
 
-            // 8. Cute Head, Blush, Eyes & Parted Hair with Blonde Highlights
-            const headGroup = new THREE.Group();
-            headGroup.position.set(0, 1.86, 0);
-            characterGroup.add(headGroup);
+            // Pink ribbed cuff on left wrist
+            const leftCuffGeo = new THREE.CylinderGeometry(0.052, 0.045, 0.055, 20);
+            const leftCuff = new THREE.Mesh(leftCuffGeo, pinkRibMat);
+            leftCuff.position.set(0.22, 0.99, 0.025);
+            breathingGroup.add(leftCuff);
 
-            const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 28, 28), skinMat);
-            head.scale.set(0.95, 1.02, 0.95);
-            headGroup.add(head);
+            // Left hand relaxed by skirt hem
+            const leftHandGeo = new THREE.SphereGeometry(0.042, 16, 12);
+            leftHandGeo.scale(0.65, 1.35, 0.95);
+            const leftHand = new THREE.Mesh(leftHandGeo, skinMat);
+            leftHand.position.set(0.215, 0.93, 0.03);
+            breathingGroup.add(leftHand);
 
-            // Eyes
-            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1e1b18 });
-            [-0.08, 0.08].forEach(xPos => {
-                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.024, 14, 14), eyeMat);
-                eye.position.set(xPos, 0.01, 0.215);
-                headGroup.add(eye);
+            // ------------------------------------------
+            // E. NECK, PINK HEART CHOKER & HEAD
+            // ------------------------------------------
+            // Neck
+            const neckGeo = new THREE.CylinderGeometry(0.058, 0.066, 0.13, 24);
+            const neck = new THREE.Mesh(neckGeo, skinMat);
+            neck.position.set(0, 1.61, 0.01);
+            neck.castShadow = true;
+            breathingGroup.add(neck);
+
+            // Pink Choker Band
+            const chokerGroup = new THREE.Group();
+            chokerGroup.position.set(0, 1.615, 0.01);
+
+            const chokerBandGeo = new THREE.CylinderGeometry(0.062, 0.064, 0.032, 32);
+            const chokerBand = new THREE.Mesh(chokerBandGeo, pinkRibMat);
+            chokerGroup.add(chokerBand);
+
+            // Silver Heart Ring in the center of the choker (seen in Photos 1, 2, 3, 4)
+            const heartShape = new THREE.Shape();
+            const hs = 0.016;
+            heartShape.moveTo(0, -hs * 0.9);
+            heartShape.bezierCurveTo(hs * 1.3, -hs * 0.1, hs * 1.4, hs * 1.1, 0, hs * 0.45);
+            heartShape.bezierCurveTo(-hs * 1.4, hs * 1.1, -hs * 1.3, -hs * 0.1, 0, -hs * 0.9);
+
+            const heartHole = new THREE.Path();
+            const hh = 0.010;
+            heartHole.moveTo(0, -hh * 0.8);
+            heartHole.bezierCurveTo(hh * 1.2, -hh * 0.1, hh * 1.3, hh * 1.0, 0, hh * 0.4);
+            heartHole.bezierCurveTo(-hh * 1.3, hh * 1.0, -hh * 1.2, -hh * 0.1, 0, -hh * 0.8);
+            heartShape.holes.push(heartHole);
+
+            const heartGeo = new THREE.ExtrudeGeometry(heartShape, {
+                depth: 0.005,
+                bevelEnabled: true,
+                bevelSegments: 2,
+                steps: 1,
+                bevelSize: 0.002,
+                bevelThickness: 0.002
+            });
+            const heartBuckle = new THREE.Mesh(heartGeo, silverMat);
+            heartBuckle.position.set(0, 0, 0.063);
+            chokerGroup.add(heartBuckle);
+
+            // Silver studs/eyelets along the choker
+            [-0.45, -0.25, 0.25, 0.45].forEach((a) => {
+                const stud = new THREE.Mesh(new THREE.SphereGeometry(0.0045, 8, 8), silverMat);
+                stud.position.set(Math.sin(a) * 0.064, 0, Math.cos(a) * 0.064);
+                chokerGroup.add(stud);
+            });
+            breathingGroup.add(chokerGroup);
+
+            // ------------------------------------------
+            // F. REALISTIC SCULPTED HEAD, FACE & LAYERED CURTAIN-PARTED HAIR
+            // ------------------------------------------
+            headGroup = new THREE.Group();
+            headGroup.position.set(0, 1.765, 0.02);
+            // Natural slight head tilt from the reference photos
+            headGroup.rotation.set(0.04, 0.12, -0.05);
+
+            const faceTexture = createRealisticFaceTexture();
+            const realisticFaceMat = new THREE.MeshStandardMaterial({
+                map: faceTexture,
+                roughness: 0.48,
+                metalness: 0.03
             });
 
-            // Rosy Cheek Blush
-            const blushMat = new THREE.MeshBasicMaterial({ color: 0xff8da1, transparent: true, opacity: 0.55 });
-            [-0.13, 0.13].forEach(xPos => {
-                const blush = new THREE.Mesh(new THREE.CircleGeometry(0.032, 16), blushMat);
-                blush.position.set(xPos, -0.04, 0.22);
-                headGroup.add(blush);
+            const headGeo = createSculptedHeadGeometry(faceTexture);
+            const headMesh = new THREE.Mesh(headGeo, realisticFaceMat);
+            headMesh.castShadow = true;
+            headMesh.receiveShadow = true;
+            headGroup.add(headMesh);
+
+            // Sculpted Ears
+            [-1, 1].forEach((s) => {
+                const earGeo = new THREE.SphereGeometry(0.028, 16, 16);
+                earGeo.scale(0.42, 1.15, 0.72);
+                const ear = new THREE.Mesh(earGeo, skinMat);
+                ear.position.set(s * 0.120, -0.012, -0.012);
+                ear.rotation.y = -s * 0.28;
+                ear.rotation.z = s * 0.08;
+                headGroup.add(ear);
             });
 
-            // Hair Cap (Dark Chestnut Brown)
-            const brownHairMat = new THREE.MeshStandardMaterial({ color: 0x3d281d, roughness: 0.65 });
-            const blondeHairMat = new THREE.MeshStandardMaterial({ color: 0xd4a359, roughness: 0.55 });
+            // Realistic Hair Materials with Fine Strand Textures
+            const darkHairTex = createRealisticHairTexture(false);
+            const highlightHairTex = createRealisticHairTexture(true);
 
-            const hairCap = new THREE.Mesh(new THREE.SphereGeometry(0.255, 24, 24, 0, Math.PI * 2, 0, Math.PI * 0.58), brownHairMat);
-            hairCap.position.y = 0.02;
-            headGroup.add(hairCap);
-
-            // Blonde Highlighted Front Bangs (Viewer's left / Thành's right side, matching photo)
-            const blondeBang1 = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 12), blondeHairMat);
-            blondeBang1.position.set(-0.09, 0.11, 0.19);
-            blondeBang1.rotation.z = 0.35;
-            blondeBang1.rotation.x = 0.35;
-            headGroup.add(blondeBang1);
-
-            const blondeBang2 = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.22, 12), blondeHairMat);
-            blondeBang2.position.set(-0.02, 0.12, 0.21);
-            blondeBang2.rotation.z = 0.15;
-            blondeBang2.rotation.x = 0.4;
-            headGroup.add(blondeBang2);
-
-            // Brown Front Bangs (Right side)
-            const brownBang = new THREE.Mesh(new THREE.ConeGeometry(0.095, 0.24, 12), brownHairMat);
-            brownBang.position.set(0.10, 0.11, 0.19);
-            brownBang.rotation.z = -0.35;
-            brownBang.rotation.x = 0.35;
-            headGroup.add(brownBang);
-
-            // Interactive Mouse & Touch Drag Rotation
-            const domEl = renderer.domElement;
-            domEl.addEventListener('mousedown', e => { isDragging = true; prevMouseX = e.clientX; });
-            window.addEventListener('mouseup', () => { isDragging = false; });
-            window.addEventListener('mousemove', e => {
-                if (!isDragging) return;
-                const delta = e.clientX - prevMouseX;
-                rootGroup.rotation.y += delta * 0.012;
-                prevMouseX = e.clientX;
+            const brownHairMat = new THREE.MeshStandardMaterial({
+                map: darkHairTex,
+                roughness: 0.62,
+                metalness: 0.08
             });
 
-            domEl.addEventListener('touchstart', e => {
+            const highlightHairMat = new THREE.MeshStandardMaterial({
+                map: highlightHairTex,
+                roughness: 0.56,
+                metalness: 0.12
+            });
+
+            // Volumetric skull crown hair base
+            const crownGeo = new THREE.SphereGeometry(0.142, 48, 36);
+            crownGeo.scale(0.97, 1.06, 1.04);
+            const crown = new THREE.Mesh(crownGeo, brownHairMat);
+            crown.position.set(0, 0.034, -0.018);
+            crown.castShadow = true;
+            headGroup.add(crown);
+
+            // Tapered nape hair at back of neck (matching Photo 5 back view)
+            const napeGeo = new THREE.CylinderGeometry(0.105, 0.055, 0.13, 24);
+            napeGeo.scale(1.0, 1.0, 0.62);
+            const nape = new THREE.Mesh(napeGeo, brownHairMat);
+            nape.position.set(0, -0.058, -0.082);
+            nape.rotation.x = 0.18;
+            headGroup.add(nape);
+
+            // Helper to build smoothly curved, organic hair locks (instead of spiky cones)
+            function createCurvedHairLock(points, widthRadii, mat) {
+                const curve = new THREE.CatmullRomCurve3(points);
+                const segs = 20;
+                const lockGeo = new THREE.TubeGeometry(curve, segs, widthRadii, 10, false);
+                // Flatten into a soft, natural hair lock ribbon and taper the tip
+                const lPos = lockGeo.attributes.position;
+                const tempV = new THREE.Vector3();
+                for (let i = 0; i < lPos.count; i++) {
+                    const ringIdx = Math.floor(i / 11);
+                    const t = ringIdx / segs; // 0 at root, 1 at tip
+                    const centerPt = curve.getPointAt(Math.min(1, t));
+                    tempV.fromBufferAttribute(lPos, i);
+                    tempV.sub(centerPt);
+                    // Taper smoothly at the root and feather to a fine tip
+                    const taper = Math.sin(Math.pow(t, 0.65) * Math.PI) * (1.0 - 0.45 * t);
+                    tempV.multiplyScalar(Math.max(0.08, taper));
+                    // Flatten depth slightly toward skull
+                    tempV.z *= 0.62;
+                    tempV.add(centerPt);
+                    lPos.setXYZ(i, tempV.x, tempV.y, tempV.z);
+                }
+                lockGeo.computeVertexNormals();
+                const mesh = new THREE.Mesh(lockGeo, mat);
+                mesh.castShadow = true;
+                return mesh;
+            }
+
+            // Side & Back Layered Hair Locks
+            for (let i = 0; i < 18; i++) {
+                const angle = (i / 17) * Math.PI * 1.44 + Math.PI * 0.28;
+                const sinA = Math.sin(angle);
+                const cosA = Math.cos(angle);
+                const pts = [
+                    new THREE.Vector3(sinA * 0.04, 0.145, cosA * 0.04 - 0.01),
+                    new THREE.Vector3(sinA * 0.125, 0.085, cosA * 0.128 - 0.01),
+                    new THREE.Vector3(sinA * 0.135, -0.015, cosA * 0.132 - 0.01),
+                    new THREE.Vector3(sinA * 0.118, -0.095, cosA * 0.115 - 0.01)
+                ];
+                const isHi = (i === 1 || i === 16);
+                headGroup.add(createCurvedHairLock(pts, 0.036, isHi ? highlightHairMat : brownHairMat));
+            }
+
+            // Realistic Parted Curtain Bangs with Warm Caramel/Blonde Front Highlights
+            const curtainBangs = [
+                // Left-side swept curtain bangs (with signature blonde/caramel highlight in front)
+                {
+                    hi: true, w: 0.032,
+                    pts: [
+                        new THREE.Vector3(-0.008, 0.142, 0.055),
+                        new THREE.Vector3(-0.045, 0.112, 0.122),
+                        new THREE.Vector3(-0.082, 0.052, 0.128),
+                        new THREE.Vector3(-0.105, 0.002, 0.102)
+                    ]
+                },
+                {
+                    hi: true, w: 0.030,
+                    pts: [
+                        new THREE.Vector3(-0.005, 0.144, 0.062),
+                        new THREE.Vector3(-0.028, 0.108, 0.130),
+                        new THREE.Vector3(-0.055, 0.048, 0.136),
+                        new THREE.Vector3(-0.072, 0.008, 0.118)
+                    ]
+                },
+                {
+                    hi: false, w: 0.034,
+                    pts: [
+                        new THREE.Vector3(-0.020, 0.140, 0.042),
+                        new THREE.Vector3(-0.078, 0.105, 0.105),
+                        new THREE.Vector3(-0.118, 0.042, 0.098),
+                        new THREE.Vector3(-0.128, -0.015, 0.065)
+                    ]
+                },
+                // Delicate center-parted wisps grazing the bridge/brow
+                {
+                    hi: true, w: 0.020,
+                    pts: [
+                        new THREE.Vector3(-0.004, 0.142, 0.068),
+                        new THREE.Vector3(-0.014, 0.102, 0.134),
+                        new THREE.Vector3(-0.022, 0.046, 0.138),
+                        new THREE.Vector3(-0.026, 0.018, 0.130)
+                    ]
+                },
+                {
+                    hi: true, w: 0.020,
+                    pts: [
+                        new THREE.Vector3(0.006, 0.142, 0.068),
+                        new THREE.Vector3(0.016, 0.102, 0.134),
+                        new THREE.Vector3(0.024, 0.048, 0.138),
+                        new THREE.Vector3(0.028, 0.020, 0.130)
+                    ]
+                },
+                // Right-side swept curtain bangs
+                {
+                    hi: true, w: 0.028,
+                    pts: [
+                        new THREE.Vector3(0.008, 0.144, 0.060),
+                        new THREE.Vector3(0.036, 0.110, 0.128),
+                        new THREE.Vector3(0.064, 0.052, 0.132),
+                        new THREE.Vector3(0.082, 0.010, 0.114)
+                    ]
+                },
+                {
+                    hi: false, w: 0.034,
+                    pts: [
+                        new THREE.Vector3(0.015, 0.142, 0.050),
+                        new THREE.Vector3(0.065, 0.108, 0.115),
+                        new THREE.Vector3(0.102, 0.048, 0.112),
+                        new THREE.Vector3(0.118, -0.005, 0.085)
+                    ]
+                },
+                {
+                    hi: false, w: 0.034,
+                    pts: [
+                        new THREE.Vector3(0.025, 0.138, 0.035),
+                        new THREE.Vector3(0.092, 0.098, 0.092),
+                        new THREE.Vector3(0.125, 0.035, 0.078),
+                        new THREE.Vector3(0.130, -0.022, 0.048)
+                    ]
+                }
+            ];
+
+            curtainBangs.forEach((b) => {
+                headGroup.add(createCurvedHairLock(b.pts, b.w, b.hi ? highlightHairMat : brownHairMat));
+            });
+
+            breathingGroup.add(headGroup);
+            scene.add(characterGroup);
+        }
+
+        // ==========================================
+        // 6. LIGHTING SETUP
+        // ==========================================
+        function setupLights() {
+            ambientLight = new THREE.AmbientLight(0xfff5eb, 0.76);
+            scene.add(ambientLight);
+
+            // Overhead Mall Atrium Skylight
+            mainDirLight = new THREE.DirectionalLight(0xfffbeb, 0.92);
+            mainDirLight.position.set(3.2, 6.5, 4.0);
+            mainDirLight.castShadow = true;
+            mainDirLight.shadow.mapSize.width = 2048;
+            mainDirLight.shadow.mapSize.height = 2048;
+            mainDirLight.shadow.camera.near = 0.5;
+            mainDirLight.shadow.camera.far = 16;
+            mainDirLight.shadow.bias = -0.0008;
+            scene.add(mainDirLight);
+
+            // Cool Escalator Glass Balustrade Up-Light
+            fillLight = new THREE.PointLight(0xbae6fd, 0.60, 8);
+            fillLight.position.set(-0.6, 0.7, 0.8);
+            scene.add(fillLight);
+
+            // Warm Mall Atrium Bounce Light from below/behind
+            atriumPointLight = new THREE.PointLight(0xfde68a, 0.6, 12);
+            atriumPointLight.position.set(-2.5, 1.5, -3.0);
+            scene.add(atriumPointLight);
+
+            // Subtle Rim Light for Hair & Pleat separation
+            rimLight = new THREE.DirectionalLight(0xfbcfe8, 0.42);
+            rimLight.position.set(-2.5, 3.0, -3.5);
+            scene.add(rimLight);
+        }
+
+        // ==========================================
+        // 7. MOUSE & TOUCH CAMERA CONTROLS
+        // ==========================================
+        function setupEventListeners() {
+            const container = document.getElementById('canvas-container');
+
+            // Mouse Controls
+            container.addEventListener('mousedown', (e) => {
+                if (e.button === 2 || e.shiftKey) {
+                    orbit.isPanning = true;
+                } else {
+                    orbit.isDragging = true;
+                }
+                orbit.prevX = e.clientX;
+                orbit.prevY = e.clientY;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!orbit.isDragging && !orbit.isPanning) return;
+                const dx = e.clientX - orbit.prevX;
+                const dy = e.clientY - orbit.prevY;
+                orbit.prevX = e.clientX;
+                orbit.prevY = e.clientY;
+
+                if (orbit.isDragging) {
+                    orbit.desiredTheta -= dx * 0.0075;
+                    orbit.desiredPhi = Math.max(0.25, Math.min(Math.PI - 0.2, orbit.desiredPhi - dy * 0.0075));
+                } else if (orbit.isPanning) {
+                    orbit.desiredTarget.y = Math.max(0.1, Math.min(2.4, orbit.desiredTarget.y + dy * 0.004));
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                orbit.isDragging = false;
+                orbit.isPanning = false;
+            });
+
+            container.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // Wheel Zoom
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                orbit.desiredRadius = Math.max(1.2, Math.min(10.5, orbit.desiredRadius + e.deltaY * 0.0035));
+            }, { passive: false });
+
+            // Touch Controls (Mobile Orbit & Pinch Zoom)
+            let lastTouchDist = 0;
+            container.addEventListener('touchstart', (e) => {
                 if (e.touches.length === 1) {
-                    isDragging = true;
-                    prevMouseX = e.touches[0].clientX;
+                    orbit.isDragging = true;
+                    orbit.prevX = e.touches[0].clientX;
+                    orbit.prevY = e.touches[0].clientY;
+                } else if (e.touches.length === 2) {
+                    orbit.isDragging = false;
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    lastTouchDist = Math.hypot(dx, dy);
                 }
             }, { passive: true });
-            window.addEventListener('touchend', () => { isDragging = false; });
-            window.addEventListener('touchmove', e => {
-                if (!isDragging || e.touches.length !== 1) return;
-                const delta = e.touches[0].clientX - prevMouseX;
-                rootGroup.rotation.y += delta * 0.012;
-                prevMouseX = e.touches[0].clientX;
+
+            container.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && orbit.isDragging) {
+                    const dx = e.touches[0].clientX - orbit.prevX;
+                    const dy = e.touches[0].clientY - orbit.prevY;
+                    orbit.prevX = e.touches[0].clientX;
+                    orbit.prevY = e.touches[0].clientY;
+
+                    orbit.desiredTheta -= dx * 0.008;
+                    orbit.desiredPhi = Math.max(0.25, Math.min(Math.PI - 0.2, orbit.desiredPhi - dy * 0.008));
+                } else if (e.touches.length === 2) {
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const dist = Math.hypot(dx, dy);
+                    const delta = lastTouchDist - dist;
+                    orbit.desiredRadius = Math.max(1.2, Math.min(10.5, orbit.desiredRadius + delta * 0.015));
+                    lastTouchDist = dist;
+                }
             }, { passive: true });
 
-            // Handle Responsive Resize
-            window.addEventListener('resize', () => {
-                if (!container) return;
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
+            container.addEventListener('touchend', () => {
+                orbit.isDragging = false;
             });
 
-            // Animation Loop
-            let clock = new THREE.Clock();
-            function animate() {
-                requestAnimationFrame(animate);
-                const t = clock.getElapsedTime();
+            // Window Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
 
-                if (autoSpin && !isDragging) {
-                    rootGroup.rotation.y = Math.sin(t * 0.55) * 0.45;
-                }
-
-                // Jump / Pose Physics
-                if (jumpOffset > 0 || jumpVelocity !== 0) {
-                    jumpOffset += jumpVelocity;
-                    jumpVelocity -= 0.008;
-                    if (jumpOffset <= 0) {
-                        jumpOffset = 0;
-                        jumpVelocity = 0;
-                    }
-                }
-
-                // Gentle breathing & bobbing
-                characterGroup.position.y = Math.sin(t * 2.5) * 0.02 + jumpOffset;
-                headGroup.rotation.z = Math.sin(t * 1.8) * 0.04;
-
-                renderer.render(scene, camera);
+        // Camera Preset Angles for the Fashion Lookbook UI
+        window.setCameraAngle = function (preset, btnEl) {
+            if (btnEl) {
+                document.querySelectorAll('.cam-btn').forEach((b) => b.classList.remove('active'));
+                btnEl.classList.add('active');
             }
-            animate();
-        }
-
-        function trigger3DJump() {
-            jumpVelocity = 0.11;
-            triggerFanCheer();
-            showToast("✨ Đạo Thành struck an escalator pose!");
-        }
-
-        function toggleAutoSpin() {
-            autoSpin = !autoSpin;
-            document.getElementById('spinToggleBtn').textContent = autoSpin ? "⟳ Spin: ON" : "⟳ Spin: OFF";
-        }
-
-        /**
-         * =========================================================================
-         * 2. SERVER-SIDE VERCEL API + GITHUB AUTO-SYNC PHOTO LOADER
-         * =========================================================================
-         */
-        const DEFAULT_PHOTOCARDS = [
-            {
-                id: "ndt-escalator",
-                url: "photos/IMG_6962.JPG",
-                fallbackUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80",
-                caption: "Signature Striped Crop Top, Heart Choker & Pleated Skirt Fit 🎀✨",
-                rarity: "UR ★ ICONIC FIT"
-            },
-            {
-                id: "ndt-1",
-                url: "photos/1.jpg",
-                fallbackUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
-                caption: "Sweet Tooth Energy: Strawberry Cake & Boba Date 🍰🍓",
-                rarity: "SSR ★ SWEETIE"
-            },
-            {
-                id: "ndt-2",
-                url: "photos/2.jpg",
-                fallbackUrl: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=800&q=80",
-                caption: "CW Chu College's Cutest Cat Whisperer 🐱🐾",
-                rarity: "SSR ★ CAT BOY"
-            },
-            {
-                id: "ndt-3",
-                url: "photos/3.jpg",
-                fallbackUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80",
-                caption: "CUHK IBBA Future CEO Between Lectures 🎓💼",
-                rarity: "SSR ★ CUHK"
+            if (preset === 'front') {
+                orbit.desiredTheta = 0.12;
+                orbit.desiredPhi = 1.34;
+                orbit.desiredRadius = 4.6;
+                orbit.desiredTarget.set(0, 1.25, 0);
+            } else if (preset === 'side') {
+                orbit.desiredTheta = 0.68;
+                orbit.desiredPhi = 1.22;
+                orbit.desiredRadius = 4.5;
+                orbit.desiredTarget.set(0, 1.18, 0);
+            } else if (preset === 'low') {
+                orbit.desiredTheta = 0.24;
+                orbit.desiredPhi = 1.62;
+                orbit.desiredRadius = 4.2;
+                orbit.desiredTarget.set(0, 1.32, 0);
+            } else if (preset === 'back') {
+                orbit.desiredTheta = Math.PI - 0.18;
+                orbit.desiredPhi = 1.15;
+                orbit.desiredRadius = 4.4;
+                orbit.desiredTarget.set(0, 1.20, 0);
+            } else if (preset === 'portrait') {
+                orbit.desiredTheta = 0.08;
+                orbit.desiredPhi = 1.44;
+                orbit.desiredRadius = 1.85;
+                orbit.desiredTarget.set(0.02, 1.68, 0.02);
             }
-        ];
+        };
 
-        let allPhotocards = [];
-        let heartCount = parseInt(localStorage.getItem('ndt_hearts') || '2812', 10);
+        // ==========================================
+        // 8. INITIALIZATION & ANIMATION LOOP
+        // ==========================================
+        let stepClock = 0;
+        const clock = new THREE.Clock();
 
-        async function loadAllPhotos() {
-            const savedCustom = JSON.parse(localStorage.getItem('ndt_custom_photos') || '[]');
-            let serverPhotos = [];
+        function init() {
+            const container = document.getElementById('canvas-container');
 
-            // 1. Try Vercel Serverless Function (/api/photos) first!
-            try {
-                const res = await fetch('/api/photos');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (Array.isArray(data.photos) && data.photos.length > 0) {
-                        serverPhotos = data.photos;
-                        document.getElementById('syncSourceBadge').textContent = `▲ Vercel Server (${serverPhotos.length})`;
-                    }
-                }
-            } catch (e) {
-                // Fallback silently if running statically without /api/photos
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0e0f14);
+            scene.fog = new THREE.FogExp2(0x0e0f14, 0.045);
+
+            camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            setupLights();
+            buildEscalatorEnvironment();
+            buildCharacterModel();
+            setupEventListeners();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const dt = clock.getDelta();
+            const elapsed = clock.getElapsedTime();
+
+            // Smoothly interpolate camera orbit
+            orbit.theta += (orbit.desiredTheta - orbit.theta) * 0.08;
+            orbit.phi += (orbit.desiredPhi - orbit.phi) * 0.08;
+            orbit.radius += (orbit.desiredRadius - orbit.radius) * 0.08;
+            orbit.target.lerp(orbit.desiredTarget, 0.08);
+
+            camera.position.x = orbit.target.x + orbit.radius * Math.sin(orbit.phi) * Math.sin(orbit.theta);
+            camera.position.y = orbit.target.y + orbit.radius * Math.cos(orbit.phi);
+            camera.position.z = orbit.target.z + orbit.radius * Math.sin(orbit.phi) * Math.cos(orbit.theta);
+            camera.lookAt(orbit.target);
+
+            // Subtle natural character breathing & head idle movement
+            if (breathingGroup && headGroup) {
+                breathingGroup.position.y = Math.sin(elapsed * 2.1) * 0.004;
+                headGroup.rotation.y = 0.12 + Math.sin(elapsed * 0.9) * 0.025;
             }
 
-            // 2. If on GitHub Pages, also auto-scan /photos folder via GitHub API
-            if (serverPhotos.length === 0 && window.location.hostname.endsWith('.github.io')) {
-                try {
-                    const owner = window.location.hostname.split('.')[0];
-                    const repo = window.location.pathname.split('/').filter(Boolean)[0] || `${owner}.github.io`;
-                    const ghRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/photos`);
-                    if (ghRes.ok) {
-                        const files = await ghRes.json();
-                        serverPhotos = files
-                            .filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f.name))
-                            .map((f, i) => ({
-                                id: `gh-${i}`,
-                                url: f.download_url,
-                                fallbackUrl: f.download_url,
-                                caption: f.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ') + ' ✨',
-                                rarity: 'SSR ★ GITHUB'
-                            }));
-                    }
-                } catch (e) {}
-            }
+            // Escalator step conveyor animation
+            stepClock += dt * 0.65;
+            updateEscalatorSteps(stepClock);
 
-            allPhotocards = [...serverPhotos, ...savedCustom, ...DEFAULT_PHOTOCARDS];
-            renderPhotocardGallery();
-        }
-
-        function renderPhotocardGallery() {
-            const grid = document.getElementById('photocardGrid');
-            grid.innerHTML = allPhotocards.map(card => `
-                <article class="holo-card bg-white dark:bg-slate-800 p-3 rounded-3xl border border-sakura-200/80 dark:border-slate-700 shadow-md flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between px-1 mb-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-sakura-400 to-lilac-500 text-white">
-                                ${card.rarity || 'SSR ★ IDOL'}
-                            </span>
-                            <span class="text-[11px] font-bold text-slate-400">08.12.2008</span>
-                        </div>
-                        <div class="aspect-[4/5] w-full rounded-2xl overflow-hidden bg-sakura-50 dark:bg-slate-900">
-                            <img src="${card.url}"
-                                 alt="${card.caption}"
-                                 loading="lazy"
-                                 onerror="if (this.src !== '${card.fallbackUrl}') { this.src = '${card.fallbackUrl}'; }"
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <p class="font-display font-bold text-xs sm:text-sm mt-2.5 px-1 line-clamp-2">
-                            ${card.caption}
-                        </p>
-                    </div>
-                    <div class="mt-2.5 pt-2 border-t border-sakura-100 dark:border-slate-700 flex items-center justify-between px-1 text-xs">
-                        <span class="text-slate-400 font-semibold">Nguyễn Đạo Thành</span>
-                        <button onclick="triggerFanCheer(event)" class="text-sakura-500 font-bold flex items-center gap-1">
-                            <i class="ph-fill ph-heart"></i> Cheer
-                        </button>
-                    </div>
-                </article>
-            `).join('');
-        }
-
-        function updateMiniBirthday() {
-            const now = new Date();
-            let next = new Date(now.getFullYear(), 11, 8);
-            if (now > next) next = new Date(now.getFullYear() + 1, 11, 8);
-            const days = Math.ceil((next - now) / (1000 * 60 * 60 * 24));
-            const el = document.getElementById('bdayCountdownMini');
-            if (el) el.textContent = `${days} days until bday! 🎉`;
-        }
-
-        function triggerFanCheer(event) {
-            heartCount++;
-            localStorage.setItem('ndt_hearts', String(heartCount));
-            document.getElementById('headerHeartCount').textContent = heartCount.toLocaleString();
-
-            const emojis = ['💖', '🌸', '🐱', '🍰', '🏳️‍🌈', '🎀'];
-            const x = event?.clientX || (window.innerWidth / 2);
-            const y = event?.clientY || (window.innerHeight / 2);
-
-            for (let i = 0; i < 3; i++) {
-                const span = document.createElement('span');
-                span.className = 'floating-heart text-xl select-none';
-                span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                span.style.left = `${x + (Math.random() * 40 - 20)}px`;
-                span.style.top = `${y + (Math.random() * 20 - 10)}px`;
-                document.body.appendChild(span);
-                setTimeout(() => span.remove(), 1200);
-            }
-        }
-
-        function openVercelModal() {
-            const m = document.getElementById('vercelModal');
-            m.classList.remove('hidden');
-            m.classList.add('flex');
-        }
-        function closeVercelModal() {
-            const m = document.getElementById('vercelModal');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-        }
-        function openUploadPhotoModal() {
-            const m = document.getElementById('uploadPhotoModal');
-            m.classList.remove('hidden');
-            m.classList.add('flex');
-        }
-        function closeUploadPhotoModal() {
-            const m = document.getElementById('uploadPhotoModal');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-        }
-
-        function handleLocalFileSelect(event) {
-            const file = event.target.files?.[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                document.getElementById('newPhotoUrl').value = e.target.result;
-                if (!document.getElementById('newPhotoCaption').value) {
-                    document.getElementById('newPhotoCaption').value = file.name.replace(/\.[^/.]+$/, '') + ' ✨';
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function handleAddCustomPhoto(event) {
-            event.preventDefault();
-            const url = document.getElementById('newPhotoUrl').value.trim();
-            const caption = document.getElementById('newPhotoCaption').value.trim();
-            const newCard = {
-                id: 'custom-' + Date.now(),
-                url,
-                fallbackUrl: url,
-                caption,
-                rarity: 'UR ★ UPLOAD'
-            };
-            const saved = JSON.parse(localStorage.getItem('ndt_custom_photos') || '[]');
-            saved.unshift(newCard);
-            localStorage.setItem('ndt_custom_photos', JSON.stringify(saved));
-            allPhotocards.unshift(newCard);
-            renderPhotocardGallery();
-            closeUploadPhotoModal();
-            showToast("📸 Added new photocard!");
-        }
-
-        function copyText(text, msg) {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            showToast(msg);
-        }
-
-        let toastTimeout;
-        function showToast(msg) {
-            const box = document.getElementById('toastBox');
-            document.getElementById('toastMessage').textContent = msg;
-            box.classList.remove('opacity-0', 'translate-y-4');
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => box.classList.add('opacity-0', 'translate-y-4'), 2800);
-        }
-
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
+            renderer.render(scene, camera);
         }
 
         window.onload = function () {
-            document.getElementById('headerHeartCount').textContent = heartCount.toLocaleString();
-            init3DModel();
-            updateMiniBirthday();
-            loadAllPhotos();
+            init();
+            animate();
         };
     </script>
 </body>
