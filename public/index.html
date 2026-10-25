@@ -184,20 +184,20 @@
         // 1. SCENE, CAMERA & RENDERER INITIALIZATION
         // ==========================================
         let scene, camera, renderer;
-        let characterGroup, headGroup, breathingGroup;
+        let sceneRootGroup, characterGroup, headGroup, breathingGroup;
         let escalatorSteps = [];
         let ambientLight, mainDirLight, fillLight, atriumPointLight, rimLight;
 
-        // Custom Orbit Control State
+        // Custom Orbit Control State (Shifted target slightly lower relative to elevated model so model sits higher on screen)
         const orbit = {
-            theta: 0.12,         // Horizontal angle (radians)
-            phi: 1.34,           // Vertical angle (radians)
-            radius: 4.8,         // Distance from target
-            target: new THREE.Vector3(0, 1.28, 0),
-            desiredTheta: 0.12,
-            desiredPhi: 1.34,
-            desiredRadius: 4.8,
-            desiredTarget: new THREE.Vector3(0, 1.28, 0),
+            theta: 0.10,         // Horizontal angle (radians)
+            phi: 1.36,           // Vertical angle (radians)
+            radius: 4.65,        // Distance from target
+            target: new THREE.Vector3(0, 1.12, 0),
+            desiredTheta: 0.10,
+            desiredPhi: 1.36,
+            desiredRadius: 4.65,
+            desiredTarget: new THREE.Vector3(0, 1.12, 0),
             isDragging: false,
             isPanning: false,
             prevX: 0,
@@ -208,23 +208,23 @@
         // 2. PROCEDURAL TEXTURE GENERATORS
         // ==========================================
 
-        // High-Resolution Realistic Portrait Face Texture matching the subject in the photos
+        // High-Resolution Realistic Portrait Face Texture matching Leo's exact facial features in the photo
         function createRealisticFaceTexture() {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 1024;
             const ctx = canvas.getContext('2d');
 
-            // 1. Base Realistic Warm Asian Skin Complexion
+            // 1. Base Realistic Warm Fair-Golden Vietnamese Skin Tone
             const baseGrad = ctx.createLinearGradient(0, 0, 0, 1024);
-            baseGrad.addColorStop(0.0, '#e3b59b');
-            baseGrad.addColorStop(0.45, '#ecc1a8');
-            baseGrad.addColorStop(0.75, '#e5b69c');
-            baseGrad.addColorStop(1.0, '#d6a389');
+            baseGrad.addColorStop(0.0, '#e2b59a');
+            baseGrad.addColorStop(0.38, '#eec5ad');
+            baseGrad.addColorStop(0.68, '#e6b89e');
+            baseGrad.addColorStop(1.0, '#cfa085');
             ctx.fillStyle = baseGrad;
             ctx.fillRect(0, 0, 1024, 1024);
 
-            // Subtle anatomical subsurface warmth (cheeks, nose, forehead)
+            // Soft radial shading helper
             function drawSoftGlow(x, y, rx, ry, color) {
                 ctx.save();
                 ctx.translate(x, y);
@@ -239,229 +239,260 @@
                 ctx.restore();
             }
 
-            // Forehead & cheek warmth
-            drawSoftGlow(512, 340, 220, 130, 'rgba(255, 228, 210, 0.35)');
-            drawSoftGlow(375, 555, 95, 75, 'rgba(232, 138, 128, 0.24)');
-            drawSoftGlow(649, 555, 95, 75, 'rgba(232, 138, 128, 0.24)');
-            // Subtle shadow under cheekbones & jawline contour
-            drawSoftGlow(330, 680, 110, 120, 'rgba(165, 110, 88, 0.18)');
-            drawSoftGlow(694, 680, 110, 120, 'rgba(165, 110, 88, 0.18)');
+            // Natural T-zone & cheek subsurface lighting matching mall overhead lights
+            drawSoftGlow(512, 350, 210, 120, 'rgba(255, 236, 222, 0.32)');
+            // Subtle warm pink-peach blush on outer-mid cheeks (clearly visible in the photo)
+            drawSoftGlow(365, 548, 105, 82, 'rgba(226, 130, 124, 0.28)');
+            drawSoftGlow(659, 548, 105, 82, 'rgba(226, 130, 124, 0.28)');
+            // Cheekbone highpoints
+            drawSoftGlow(390, 515, 65, 42, 'rgba(255, 238, 228, 0.22)');
+            drawSoftGlow(634, 515, 65, 42, 'rgba(255, 238, 228, 0.22)');
+            // Jawline & lower cheek subtle shadow contour
+            drawSoftGlow(325, 675, 115, 130, 'rgba(148, 95, 74, 0.24)');
+            drawSoftGlow(699, 675, 115, 130, 'rgba(148, 95, 74, 0.24)');
+            // Temple shadows
+            drawSoftGlow(310, 440, 75, 95, 'rgba(140, 88, 68, 0.22)');
+            drawSoftGlow(714, 440, 75, 95, 'rgba(140, 88, 68, 0.22)');
 
-            // Ultra-fine natural skin pore micro-texture
-            for (let i = 0; i < 18000; i++) {
+            // Ultra-fine realistic skin pore & complexion grain
+            for (let i = 0; i < 22000; i++) {
                 const px = Math.random() * 1024;
                 const py = Math.random() * 1024;
-                ctx.fillStyle = (i % 2 === 0) ? 'rgba(255,245,238,0.03)' : 'rgba(140,85,65,0.03)';
-                ctx.fillRect(px, py, 1.5, 1.5);
+                ctx.fillStyle = (i % 2 === 0) ? 'rgba(255,246,240,0.028)' : 'rgba(135,82,62,0.028)';
+                ctx.fillRect(px, py, 1.4, 1.4);
             }
 
-            // 2. Eye Sockets & Natural East Asian Almond Eyes (Centered around y = 472)
-            const leftEyeX = 416;
-            const rightEyeX = 608;
-            const eyeY = 472;
+            // 2. Realistic East Asian Almond Eyes & Soft Gaze (y = 474)
+            const leftEyeX = 414;
+            const rightEyeX = 610;
+            const eyeY = 474;
 
             [leftEyeX, rightEyeX].forEach((ex, idx) => {
-                const dir = (idx === 0) ? -1 : 1; // -1 for left on canvas, +1 for right on canvas
+                const dir = (idx === 0) ? -1 : 1; // -1 = left side on canvas, +1 = right side on canvas
 
-                // Soft orbital socket shading
-                drawSoftGlow(ex, eyeY - 6, 56, 36, 'rgba(162, 106, 84, 0.28)');
-                drawSoftGlow(ex, eyeY + 24, 48, 20, 'rgba(175, 115, 95, 0.18)');
+                // Upper and lower orbital socket shading
+                drawSoftGlow(ex, eyeY - 10, 58, 34, 'rgba(150, 94, 74, 0.34)');
+                drawSoftGlow(ex, eyeY + 22, 52, 20, 'rgba(165, 104, 84, 0.22)');
 
-                // Subtle double-eyelid crease line
+                // Natural low/tapered double-eyelid fold
                 ctx.save();
-                ctx.strokeStyle = 'rgba(115, 68, 52, 0.52)';
-                ctx.lineWidth = 3.2;
+                ctx.strokeStyle = 'rgba(102, 58, 44, 0.58)';
+                ctx.lineWidth = 2.8;
                 ctx.lineCap = 'round';
                 ctx.beginPath();
-                ctx.moveTo(ex - dir * 36, eyeY + 2);
-                ctx.quadraticCurveTo(ex - dir * 4, eyeY - 24, ex + dir * 42, eyeY - 4);
+                ctx.moveTo(ex - dir * 37, eyeY + 4);
+                ctx.quadraticCurveTo(ex - dir * 4, eyeY - 21, ex + dir * 42, eyeY - 2);
                 ctx.stroke();
 
-                // Sclera (Natural off-white almond shape)
+                // Sclera (horizontally elongated almond eye shape matching the photo)
                 ctx.beginPath();
-                ctx.moveTo(ex - dir * 38, eyeY + 4);
-                ctx.quadraticCurveTo(ex - dir * 6, eyeY - 19, ex + dir * 40, eyeY + 1);
-                ctx.quadraticCurveTo(ex + dir * 4, eyeY + 18, ex - dir * 38, eyeY + 4);
+                ctx.moveTo(ex - dir * 39, eyeY + 5);
+                ctx.quadraticCurveTo(ex - dir * 6, eyeY - 17, ex + dir * 41, eyeY + 2);
+                ctx.quadraticCurveTo(ex + dir * 6, eyeY + 16, ex - dir * 39, eyeY + 5);
                 ctx.closePath();
 
                 ctx.save();
                 ctx.clip();
 
-                const scleraGrad = ctx.createLinearGradient(ex, eyeY - 18, ex, eyeY + 18);
-                scleraGrad.addColorStop(0.0, '#cabab4');
-                scleraGrad.addColorStop(0.28, '#f3ece9');
-                scleraGrad.addColorStop(0.8, '#faf6f5');
-                scleraGrad.addColorStop(1.0, '#d8c8c3');
+                const scleraGrad = ctx.createLinearGradient(ex, eyeY - 17, ex, eyeY + 17);
+                scleraGrad.addColorStop(0.0, '#c4b4ae');
+                scleraGrad.addColorStop(0.30, '#f2eae7');
+                scleraGrad.addColorStop(0.75, '#f8f4f2');
+                scleraGrad.addColorStop(1.0, '#d2c2bc');
                 ctx.fillStyle = scleraGrad;
-                ctx.fillRect(ex - 50, eyeY - 25, 100, 50);
+                ctx.fillRect(ex - 52, eyeY - 24, 104, 48);
 
-                // Inner tear duct warmth
-                drawSoftGlow(ex - dir * 34, eyeY + 4, 10, 8, 'rgba(205, 120, 115, 0.55)');
+                // Inner tear duct caruncle
+                drawSoftGlow(ex - dir * 36, eyeY + 5, 9, 7, 'rgba(198, 112, 106, 0.60)');
 
-                // Realistic Dark Brown Iris
+                // Deep Espresso-Black Iris (looking directly at viewer)
                 const irisX = ex - dir * 2;
                 const irisY = eyeY - 1;
-                const irisR = 17.5;
+                const irisR = 17.8;
 
-                const irisGrad = ctx.createRadialGradient(irisX, irisY, 3, irisX, irisY, irisR);
-                irisGrad.addColorStop(0.0, '#090605');
-                irisGrad.addColorStop(0.35, '#1c110c');
-                irisGrad.addColorStop(0.78, '#362117');
-                irisGrad.addColorStop(0.95, '#1e120d');
-                irisGrad.addColorStop(1.0, 'rgba(20,12,8,0)');
+                const irisGrad = ctx.createRadialGradient(irisX, irisY, 2.5, irisX, irisY, irisR);
+                irisGrad.addColorStop(0.0, '#050303');
+                irisGrad.addColorStop(0.42, '#140c09');
+                irisGrad.addColorStop(0.80, '#2a1811');
+                irisGrad.addColorStop(0.96, '#120a07');
+                irisGrad.addColorStop(1.0, 'rgba(18,10,7,0)');
                 ctx.fillStyle = irisGrad;
                 ctx.beginPath();
                 ctx.arc(irisX, irisY, irisR, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Pupil
-                ctx.fillStyle = '#070504';
+                ctx.fillStyle = '#040302';
                 ctx.beginPath();
-                ctx.arc(irisX, irisY, 6.8, 0, Math.PI * 2);
+                ctx.arc(irisX, irisY, 7.2, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Realistic Atrium Specular Catchlights
-                ctx.fillStyle = 'rgba(255, 252, 248, 0.92)';
+                // Sharp Mall Skylight Catchlight (upper-left of iris, just like the photo)
+                ctx.fillStyle = 'rgba(255, 253, 250, 0.94)';
                 ctx.beginPath();
-                ctx.ellipse(irisX - 5, irisY - 5, 3.4, 2.4, -0.3, 0, Math.PI * 2);
+                ctx.ellipse(irisX - 4.8, irisY - 4.8, 3.3, 2.3, -0.25, 0, Math.PI * 2);
                 ctx.fill();
 
-                ctx.fillStyle = 'rgba(255, 252, 248, 0.45)';
+                // Secondary soft lower reflection
+                ctx.fillStyle = 'rgba(255, 248, 244, 0.42)';
                 ctx.beginPath();
-                ctx.arc(irisX + 5, irisY + 5, 1.6, 0, Math.PI * 2);
+                ctx.arc(irisX + 4.8, irisY + 5.0, 1.6, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Upper lid shadow across top of eyeball
-                const lidShadow = ctx.createLinearGradient(ex, eyeY - 19, ex, eyeY - 4);
-                lidShadow.addColorStop(0, 'rgba(35, 18, 12, 0.65)');
-                lidShadow.addColorStop(1, 'rgba(35, 18, 12, 0)');
+                // Upper lid cast shadow across top of eye
+                const lidShadow = ctx.createLinearGradient(ex, eyeY - 18, ex, eyeY - 3);
+                lidShadow.addColorStop(0, 'rgba(24, 12, 8, 0.72)');
+                lidShadow.addColorStop(1, 'rgba(24, 12, 8, 0)');
                 ctx.fillStyle = lidShadow;
-                ctx.fillRect(ex - 50, eyeY - 22, 100, 20);
+                ctx.fillRect(ex - 52, eyeY - 22, 104, 20);
 
                 ctx.restore();
 
-                // Upper lash line (soft, natural dark brown-black)
-                ctx.strokeStyle = '#1f1410';
-                ctx.lineWidth = 4.2;
+                // Upper lash line (dense, natural dark espresso)
+                ctx.strokeStyle = '#170e0b';
+                ctx.lineWidth = 4.4;
                 ctx.lineCap = 'round';
                 ctx.beginPath();
-                ctx.moveTo(ex - dir * 38, eyeY + 4);
-                ctx.quadraticCurveTo(ex - dir * 6, eyeY - 19, ex + dir * 41, eyeY + 1);
+                ctx.moveTo(ex - dir * 39, eyeY + 5);
+                ctx.quadraticCurveTo(ex - dir * 6, eyeY - 17, ex + dir * 42, eyeY + 2);
                 ctx.stroke();
 
-                // Subtle lower lid definition & aegyo-sal contour
-                ctx.strokeStyle = 'rgba(130, 78, 62, 0.42)';
+                // Outer corner subtle lash shadow
+                ctx.strokeStyle = 'rgba(42, 24, 18, 0.48)';
+                ctx.lineWidth = 2.6;
+                ctx.beginPath();
+                ctx.moveTo(ex + dir * 24, eyeY + 9);
+                ctx.quadraticCurveTo(ex + dir * 34, eyeY + 5, ex + dir * 43, eyeY + 2);
+                ctx.stroke();
+
+                // Lower waterline & subtle aegyo-sal fullness under the eye
+                ctx.strokeStyle = 'rgba(128, 76, 60, 0.38)';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(ex - dir * 35, eyeY + 6);
+                ctx.quadraticCurveTo(ex + dir * 5, eyeY + 16, ex + dir * 39, eyeY + 3);
+                ctx.stroke();
+
+                drawSoftGlow(ex + dir * 2, eyeY + 14, 28, 4.5, 'rgba(255, 236, 224, 0.25)');
+                ctx.strokeStyle = 'rgba(148, 92, 74, 0.26)';
                 ctx.lineWidth = 2.0;
                 ctx.beginPath();
-                ctx.moveTo(ex - dir * 35, eyeY + 5);
-                ctx.quadraticCurveTo(ex + dir * 4, eyeY + 18, ex + dir * 39, eyeY + 2);
-                ctx.stroke();
-
-                ctx.strokeStyle = 'rgba(165, 108, 88, 0.22)';
-                ctx.lineWidth = 2.2;
-                ctx.beginPath();
                 ctx.moveTo(ex - dir * 26, eyeY + 16);
-                ctx.quadraticCurveTo(ex + dir * 2, eyeY + 25, ex + dir * 30, eyeY + 13);
+                ctx.quadraticCurveTo(ex + dir * 3, eyeY + 24, ex + dir * 31, eyeY + 13);
                 ctx.stroke();
                 ctx.restore();
 
-                // 3. Natural Feathered Eyebrows
+                // 3. Soft Straight-ish Feathered Eyebrows (partially peeking beneath bangs)
                 ctx.save();
-                const browY = eyeY - 48;
-                drawSoftGlow(ex + dir * 4, browY, 48, 11, 'rgba(72, 48, 36, 0.45)');
-                ctx.strokeStyle = 'rgba(62, 40, 30, 0.55)';
+                const browY = eyeY - 46;
+                drawSoftGlow(ex + dir * 4, browY, 48, 11, 'rgba(58, 38, 28, 0.48)');
+                ctx.strokeStyle = 'rgba(50, 32, 24, 0.56)';
                 ctx.lineWidth = 2.2;
                 ctx.lineCap = 'round';
-                for (let s = -38; s <= 40; s += 3.5) {
+                for (let s = -38; s <= 40; s += 3.2) {
                     const bx = ex + dir * s;
-                    const arch = -Math.sin(((s + 38) / 78) * Math.PI) * 7;
+                    const arch = -Math.sin(((s + 38) / 78) * Math.PI) * 5.5;
                     ctx.beginPath();
                     ctx.moveTo(bx, browY + arch + 5);
-                    ctx.lineTo(bx + dir * 5, browY + arch - 5);
+                    ctx.lineTo(bx + dir * 5.5, browY + arch - 5);
                     ctx.stroke();
                 }
                 ctx.restore();
             });
 
-            // 4. Nose Bridge, Tip & Nostrils Shading (Centered at x = 512, y = 470..585)
-            // Soft shadows along sides of nasal bridge
-            drawSoftGlow(484, 515, 16, 58, 'rgba(168, 112, 88, 0.25)');
-            drawSoftGlow(540, 515, 16, 58, 'rgba(168, 112, 88, 0.25)');
-            // Soft highlight down the nose bridge & rounded tip
-            drawSoftGlow(512, 520, 11, 52, 'rgba(255, 240, 230, 0.38)');
-            drawSoftGlow(512, 574, 22, 16, 'rgba(255, 238, 226, 0.35)');
-            // Shadow beneath nose tip & alar base
-            drawSoftGlow(512, 596, 38, 14, 'rgba(138, 82, 64, 0.42)');
+            // 4. Realistic Nose Bridge, Soft Rounded Tip & Alar Wings (x = 512, y = 472..592)
+            // Nasal bridge side contour shadows
+            drawSoftGlow(481, 520, 17, 60, 'rgba(156, 98, 76, 0.30)');
+            drawSoftGlow(543, 520, 17, 60, 'rgba(156, 98, 76, 0.30)');
+            // Wider alar nostril wings shading (matching the photo's natural rounded nose tip)
+            drawSoftGlow(474, 578, 22, 18, 'rgba(150, 92, 72, 0.28)');
+            drawSoftGlow(550, 578, 22, 18, 'rgba(150, 92, 72, 0.28)');
+            // Soft highlight along the bridge and bulbous tip
+            drawSoftGlow(512, 522, 11, 50, 'rgba(255, 240, 230, 0.36)');
+            drawSoftGlow(512, 574, 24, 17, 'rgba(255, 238, 226, 0.40)');
+            // Cast shadow directly beneath nose tip & columella
+            drawSoftGlow(512, 597, 42, 15, 'rgba(128, 74, 56, 0.46)');
 
-            // Subtle nostrils
-            [-17, 17].forEach((nx) => {
+            // Nostrils
+            [-18, 18].forEach((nx) => {
                 ctx.save();
                 ctx.translate(512 + nx, 591);
-                ctx.rotate(nx < 0 ? 0.35 : -0.35);
-                ctx.fillStyle = 'rgba(78, 42, 32, 0.68)';
+                ctx.rotate(nx < 0 ? 0.32 : -0.32);
+                ctx.fillStyle = 'rgba(68, 36, 26, 0.74)';
                 ctx.beginPath();
-                ctx.ellipse(0, 0, 7.5, 4.2, 0, 0, Math.PI * 2);
+                ctx.ellipse(0, 0, 8.2, 4.4, 0, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             });
 
-            // Philtrum groove
-            drawSoftGlow(512, 622, 12, 18, 'rgba(155, 98, 78, 0.22)');
+            // Subtle philtrum dimple & columns
+            drawSoftGlow(512, 622, 13, 18, 'rgba(148, 90, 70, 0.26)');
+            drawSoftGlow(498, 622, 5, 16, 'rgba(255, 236, 224, 0.18)');
+            drawSoftGlow(526, 622, 5, 16, 'rgba(255, 236, 224, 0.18)');
 
-            // 5. Realistic Natural Lips (x = 512, y = 656)
+            // 5. Realistic Composed/Slightly Pouty Lips (matching Photo 1's calm expression with slightly downturned corners)
             const lipY = 656;
-            // Shadow under lower lip
-            drawSoftGlow(512, lipY + 34, 34, 11, 'rgba(145, 90, 72, 0.38)');
+            // Chin crease shadow directly under plush lower lip
+            drawSoftGlow(512, lipY + 35, 36, 12, 'rgba(136, 80, 62, 0.42)');
+            // Subtle chin highlight below crease
+            drawSoftGlow(512, lipY + 62, 44, 24, 'rgba(255, 236, 224, 0.24)');
 
-            // Upper lip (natural muted rose-coral)
+            // Upper lip (distinct Cupid's bow, muted natural rose-terracotta)
             ctx.save();
             ctx.beginPath();
-            ctx.moveTo(462, lipY + 3);
-            ctx.quadraticCurveTo(488, lipY - 15, 503, lipY - 12);
-            ctx.quadraticCurveTo(512, lipY - 8, 521, lipY - 12);
-            ctx.quadraticCurveTo(536, lipY - 15, 562, lipY + 3);
-            ctx.quadraticCurveTo(512, lipY + 7, 462, lipY + 3);
+            ctx.moveTo(460, lipY + 6);
+            ctx.quadraticCurveTo(486, lipY - 15, 501, lipY - 13);
+            ctx.quadraticCurveTo(512, lipY - 8, 523, lipY - 13);
+            ctx.quadraticCurveTo(538, lipY - 15, 564, lipY + 6);
+            ctx.quadraticCurveTo(536, lipY + 2, 512, lipY + 4);
+            ctx.quadraticCurveTo(488, lipY + 2, 460, lipY + 6);
             ctx.closePath();
-            const upperLipGrad = ctx.createLinearGradient(512, lipY - 15, 512, lipY + 5);
-            upperLipGrad.addColorStop(0, '#c87e77');
-            upperLipGrad.addColorStop(1, '#b56962');
+            const upperLipGrad = ctx.createLinearGradient(512, lipY - 15, 512, lipY + 6);
+            upperLipGrad.addColorStop(0, '#c0746d');
+            upperLipGrad.addColorStop(1, '#a95d56');
             ctx.fillStyle = upperLipGrad;
             ctx.fill();
 
-            // Lower lip (fuller, softly lit)
+            // Lower lip (fuller pillowy shape)
             ctx.beginPath();
-            ctx.moveTo(462, lipY + 3);
-            ctx.quadraticCurveTo(512, lipY + 7, 562, lipY + 3);
-            ctx.quadraticCurveTo(542, lipY + 28, 512, lipY + 29);
-            ctx.quadraticCurveTo(482, lipY + 28, 462, lipY + 3);
+            ctx.moveTo(460, lipY + 6);
+            ctx.quadraticCurveTo(488, lipY + 2, 512, lipY + 4);
+            ctx.quadraticCurveTo(536, lipY + 2, 564, lipY + 6);
+            ctx.quadraticCurveTo(544, lipY + 30, 512, lipY + 31);
+            ctx.quadraticCurveTo(480, lipY + 30, 460, lipY + 6);
             ctx.closePath();
-            const lowerLipGrad = ctx.createLinearGradient(512, lipY + 3, 512, lipY + 29);
-            lowerLipGrad.addColorStop(0.0, '#c2736c');
-            lowerLipGrad.addColorStop(0.45, '#da8e86');
-            lowerLipGrad.addColorStop(1.0, '#c97c74');
+            const lowerLipGrad = ctx.createLinearGradient(512, lipY + 3, 512, lipY + 31);
+            lowerLipGrad.addColorStop(0.0, '#b5665f');
+            lowerLipGrad.addColorStop(0.45, '#d68880');
+            lowerLipGrad.addColorStop(1.0, '#be726b');
             ctx.fillStyle = lowerLipGrad;
             ctx.fill();
 
-            // Soft lip highlight
-            drawSoftGlow(512, lipY + 15, 26, 6, 'rgba(255, 235, 232, 0.32)');
+            // Natural lower lip sheen
+            drawSoftGlow(512, lipY + 16, 28, 6.5, 'rgba(255, 236, 232, 0.36)');
 
-            // Subtle natural mouth line
-            ctx.strokeStyle = 'rgba(92, 44, 38, 0.62)';
-            ctx.lineWidth = 2.6;
+            // Realistic mouth line with subtle shadow at the outer corners (matching his calm, composed look)
+            ctx.strokeStyle = 'rgba(82, 38, 32, 0.68)';
+            ctx.lineWidth = 2.8;
             ctx.lineCap = 'round';
             ctx.beginPath();
-            ctx.moveTo(460, lipY + 3);
-            ctx.quadraticCurveTo(490, lipY + 1, 512, lipY + 4);
-            ctx.quadraticCurveTo(534, lipY + 1, 564, lipY + 3);
+            ctx.moveTo(458, lipY + 7);
+            ctx.quadraticCurveTo(488, lipY + 1, 512, lipY + 4);
+            ctx.quadraticCurveTo(536, lipY + 1, 566, lipY + 7);
             ctx.stroke();
+
+            // Tiny corner oral commissure shadows
+            drawSoftGlow(458, lipY + 7, 8, 5, 'rgba(110, 55, 45, 0.38)');
+            drawSoftGlow(566, lipY + 7, 8, 5, 'rgba(110, 55, 45, 0.38)');
             ctx.restore();
 
-            // Soft hair shadow at top of forehead under curtain bangs
-            const foreheadShadow = ctx.createLinearGradient(0, 180, 0, 390);
-            foreheadShadow.addColorStop(0, 'rgba(58, 38, 26, 0.55)');
-            foreheadShadow.addColorStop(1, 'rgba(58, 38, 26, 0.0)');
+            // Soft shadow cast by curtain bangs across upper forehead & brow
+            const foreheadShadow = ctx.createLinearGradient(0, 180, 0, 420);
+            foreheadShadow.addColorStop(0.0, 'rgba(48, 30, 20, 0.68)');
+            foreheadShadow.addColorStop(0.65, 'rgba(58, 38, 26, 0.28)');
+            foreheadShadow.addColorStop(1.0, 'rgba(58, 38, 26, 0.0)');
             ctx.fillStyle = foreheadShadow;
-            ctx.fillRect(0, 0, 1024, 390);
+            ctx.fillRect(0, 0, 1024, 420);
 
             const tex = new THREE.CanvasTexture(canvas);
             tex.anisotropy = 4;
@@ -915,7 +946,7 @@
             stickerPlane.rotation.y = Math.PI / 2;
             envGroup.add(stickerPlane);
 
-            scene.add(envGroup);
+            sceneRootGroup.add(envGroup);
         }
 
         // Update Escalator Steps Position & Retract Cleanly Inside Landings
@@ -958,19 +989,19 @@
                 const ny = v.y / 0.132;
                 const nz = v.z / 0.132;
 
-                // Overall East Asian youth skull proportions
-                let sx = nx * 0.91;
-                let sy = ny * 1.13;
+                // Youthful East Asian facial proportions matching the photo (softly rounded cheeks + V-tapered jaw)
+                let sx = nx * 0.92;
+                let sy = ny * 1.11;
                 let sz = nz * 0.97;
 
-                // Taper lower face into realistic jawline & chin (ny < 0)
+                // Taper lower face into realistic soft jawline & rounded chin (ny < 0)
                 if (ny < 0) {
-                    const jawTaper = Math.pow(-ny, 1.35);
-                    sx *= (1.0 - 0.30 * jawTaper);
-                    sz *= (1.0 - 0.16 * jawTaper);
-                    // Bring chin slightly forward
+                    const jawTaper = Math.pow(-ny, 1.42);
+                    sx *= (1.0 - 0.28 * jawTaper);
+                    sz *= (1.0 - 0.15 * jawTaper);
+                    // Bring chin forward naturally
                     if (nz > 0) {
-                        sz += 0.07 * Math.exp(-Math.pow(nx / 0.32, 2) - Math.pow((ny + 0.72) / 0.25, 2));
+                        sz += 0.068 * Math.exp(-Math.pow(nx / 0.34, 2) - Math.pow((ny + 0.72) / 0.25, 2));
                     }
                 }
 
@@ -983,41 +1014,41 @@
                 if (nz > 0.15) {
                     const frontMask = Math.max(0, (nz - 0.15) / 0.85);
 
-                    // 1. Subtle Brow Ridge (ny ~ 0.24)
-                    const browBump = 0.042 * Math.exp(-Math.pow((ny - 0.24) / 0.11, 2) - Math.pow(nx / 0.58, 4));
+                    // 1. Smooth Brow Ridge (ny ~ 0.24)
+                    const browBump = 0.038 * Math.exp(-Math.pow((ny - 0.24) / 0.11, 2) - Math.pow(nx / 0.58, 4));
 
                     // 2. Eye Sockets & Gentle Eyelid Fullness (nx ~ ±0.31, ny ~ 0.08)
                     const leftEyeDist = Math.pow((nx + 0.31) / 0.19, 2) + Math.pow((ny - 0.08) / 0.13, 2);
                     const rightEyeDist = Math.pow((nx - 0.31) / 0.19, 2) + Math.pow((ny - 0.08) / 0.13, 2);
-                    const eyeSocket = -0.048 * (Math.exp(-leftEyeDist) + Math.exp(-rightEyeDist));
+                    const eyeSocket = -0.044 * (Math.exp(-leftEyeDist) + Math.exp(-rightEyeDist));
                     const eyeballMount = 0.028 * (
                         Math.exp(-Math.pow((nx + 0.30) / 0.12, 2) - Math.pow((ny - 0.07) / 0.07, 2)) +
                         Math.exp(-Math.pow((nx - 0.30) / 0.12, 2) - Math.pow((ny - 0.07) / 0.07, 2))
                     );
 
-                    // 3. Sculpted Nose Bridge, Rounded Tip & Nostril Wings (ny from 0.12 down to -0.22)
+                    // 3. Sculpted Nose Bridge, Soft Rounded Tip & Alar Wings (ny from 0.12 down to -0.22)
                     let noseProtrusion = 0;
                     if (ny < 0.20 && ny > -0.28) {
                         const tNose = (0.16 - ny) / 0.34; // 0 at bridge top, 1 at nasal tip
                         const clampedT = Math.max(0, Math.min(1.15, tNose));
                         const bridgeProfile = Math.sin(Math.min(1, clampedT) * Math.PI * 0.68);
-                        const widthAtY = 0.095 + 0.065 * Math.pow(Math.max(0, clampedT), 1.6);
+                        const widthAtY = 0.10 + 0.072 * Math.pow(Math.max(0, clampedT), 1.55);
                         const lateralFalloff = Math.exp(-Math.pow(nx / widthAtY, 2));
                         const verticalCutoff = ny < -0.18 ? Math.exp(-Math.pow((ny + 0.18) / 0.06, 2)) : 1.0;
-                        noseProtrusion = 0.155 * bridgeProfile * lateralFalloff * verticalCutoff;
+                        noseProtrusion = 0.148 * bridgeProfile * lateralFalloff * verticalCutoff;
                     }
 
-                    // 4. Soft Cheekbone & Mid-Cheek Fullness
-                    const cheekFullness = 0.045 * (
-                        Math.exp(-Math.pow((nx + 0.42) / 0.28, 2) - Math.pow((ny + 0.08) / 0.26, 2)) +
-                        Math.exp(-Math.pow((nx - 0.42) / 0.28, 2) - Math.pow((ny + 0.08) / 0.26, 2))
+                    // 4. Youthful Mid-Cheek & Cheekbone Fullness (characteristic of Leo's face in Photo 1)
+                    const cheekFullness = 0.056 * (
+                        Math.exp(-Math.pow((nx + 0.40) / 0.30, 2) - Math.pow((ny + 0.09) / 0.28, 2)) +
+                        Math.exp(-Math.pow((nx - 0.40) / 0.30, 2) - Math.pow((ny + 0.09) / 0.28, 2))
                     );
 
-                    // 5. Sculpted Upper & Lower Lips (ny ~ -0.38)
-                    const upperLip = 0.052 * Math.exp(-Math.pow(nx / 0.22, 2) - Math.pow((ny + 0.34) / 0.055, 2));
-                    const lowerLip = 0.058 * Math.exp(-Math.pow(nx / 0.20, 2) - Math.pow((ny + 0.43) / 0.06, 2));
+                    // 5. Sculpted Plush Upper & Lower Lips (ny ~ -0.38)
+                    const upperLip = 0.054 * Math.exp(-Math.pow(nx / 0.22, 2) - Math.pow((ny + 0.34) / 0.055, 2));
+                    const lowerLip = 0.062 * Math.exp(-Math.pow(nx / 0.20, 2) - Math.pow((ny + 0.43) / 0.062, 2));
                     const mouthPart = -0.022 * Math.exp(-Math.pow(nx / 0.21, 2) - Math.pow((ny + 0.385) / 0.018, 2));
-                    const chinCleft = -0.025 * Math.exp(-Math.pow(nx / 0.22, 2) - Math.pow((ny + 0.53) / 0.05, 2));
+                    const chinCleft = -0.026 * Math.exp(-Math.pow(nx / 0.22, 2) - Math.pow((ny + 0.53) / 0.05, 2));
 
                     sz += frontMask * (browBump + eyeSocket + eyeballMount + noseProtrusion + cheekFullness + upperLip + lowerLip + mouthPart + chinCleft);
                 }
@@ -1504,8 +1535,8 @@
             // ------------------------------------------
             headGroup = new THREE.Group();
             headGroup.position.set(0, 1.765, 0.02);
-            // Natural slight head tilt from the reference photos
-            headGroup.rotation.set(0.04, 0.12, -0.05);
+            // Match the exact slight head tilt and direct gaze from Photo 1
+            headGroup.rotation.set(0.03, 0.10, -0.045);
 
             const faceTexture = createRealisticFaceTexture();
             const realisticFaceMat = new THREE.MeshStandardMaterial({
@@ -1520,14 +1551,14 @@
             headMesh.receiveShadow = true;
             headGroup.add(headMesh);
 
-            // Sculpted Ears
+            // Sculpted Ears (with the character's left ear +X clearly peeking out under the tucked side hair as in the photo)
             [-1, 1].forEach((s) => {
-                const earGeo = new THREE.SphereGeometry(0.028, 16, 16);
-                earGeo.scale(0.42, 1.15, 0.72);
+                const earGeo = new THREE.SphereGeometry(0.029, 16, 16);
+                earGeo.scale(0.44, 1.18, 0.74);
                 const ear = new THREE.Mesh(earGeo, skinMat);
-                ear.position.set(s * 0.120, -0.012, -0.012);
-                ear.rotation.y = -s * 0.28;
-                ear.rotation.z = s * 0.08;
+                ear.position.set(s * 0.122, -0.012, -0.008);
+                ear.rotation.y = -s * 0.30;
+                ear.rotation.z = s * 0.09;
                 headGroup.add(ear);
             });
 
@@ -1543,32 +1574,31 @@
 
             const highlightHairMat = new THREE.MeshStandardMaterial({
                 map: highlightHairTex,
-                roughness: 0.56,
+                roughness: 0.54,
                 metalness: 0.12
             });
 
-            // Volumetric skull crown hair base
-            const crownGeo = new THREE.SphereGeometry(0.142, 48, 36);
-            crownGeo.scale(0.97, 1.06, 1.04);
+            // Volumetric skull crown hair base (fuller rounded mushroom/two-block silhouette)
+            const crownGeo = new THREE.SphereGeometry(0.145, 48, 36);
+            crownGeo.scale(0.99, 1.06, 1.05);
             const crown = new THREE.Mesh(crownGeo, brownHairMat);
-            crown.position.set(0, 0.034, -0.018);
+            crown.position.set(0, 0.036, -0.016);
             crown.castShadow = true;
             headGroup.add(crown);
 
-            // Tapered nape hair at back of neck (matching Photo 5 back view)
-            const napeGeo = new THREE.CylinderGeometry(0.105, 0.055, 0.13, 24);
-            napeGeo.scale(1.0, 1.0, 0.62);
+            // Tapered nape hair & subtle mullet tail at back of neck (visible behind ear in Photo 1 & back view)
+            const napeGeo = new THREE.CylinderGeometry(0.106, 0.056, 0.14, 24);
+            napeGeo.scale(1.0, 1.0, 0.64);
             const nape = new THREE.Mesh(napeGeo, brownHairMat);
-            nape.position.set(0, -0.058, -0.082);
+            nape.position.set(0, -0.062, -0.080);
             nape.rotation.x = 0.18;
             headGroup.add(nape);
 
-            // Helper to build smoothly curved, organic hair locks (instead of spiky cones)
+            // Helper to build smoothly curved, organic hair locks
             function createCurvedHairLock(points, widthRadii, mat) {
                 const curve = new THREE.CatmullRomCurve3(points);
                 const segs = 20;
                 const lockGeo = new THREE.TubeGeometry(curve, segs, widthRadii, 10, false);
-                // Flatten into a soft, natural hair lock ribbon and taper the tip
                 const lPos = lockGeo.attributes.position;
                 const tempV = new THREE.Vector3();
                 for (let i = 0; i < lPos.count; i++) {
@@ -1577,10 +1607,8 @@
                     const centerPt = curve.getPointAt(Math.min(1, t));
                     tempV.fromBufferAttribute(lPos, i);
                     tempV.sub(centerPt);
-                    // Taper smoothly at the root and feather to a fine tip
                     const taper = Math.sin(Math.pow(t, 0.65) * Math.PI) * (1.0 - 0.45 * t);
                     tempV.multiplyScalar(Math.max(0.08, taper));
-                    // Flatten depth slightly toward skull
                     tempV.z *= 0.62;
                     tempV.add(centerPt);
                     lPos.setXYZ(i, tempV.x, tempV.y, tempV.z);
@@ -1597,90 +1625,100 @@
                 const sinA = Math.sin(angle);
                 const cosA = Math.cos(angle);
                 const pts = [
-                    new THREE.Vector3(sinA * 0.04, 0.145, cosA * 0.04 - 0.01),
-                    new THREE.Vector3(sinA * 0.125, 0.085, cosA * 0.128 - 0.01),
-                    new THREE.Vector3(sinA * 0.135, -0.015, cosA * 0.132 - 0.01),
-                    new THREE.Vector3(sinA * 0.118, -0.095, cosA * 0.115 - 0.01)
+                    new THREE.Vector3(sinA * 0.04, 0.146, cosA * 0.04 - 0.01),
+                    new THREE.Vector3(sinA * 0.128, 0.086, cosA * 0.128 - 0.01),
+                    new THREE.Vector3(sinA * 0.136, -0.015, cosA * 0.132 - 0.01),
+                    new THREE.Vector3(sinA * 0.118, -0.098, cosA * 0.115 - 0.01)
                 ];
-                const isHi = (i === 1 || i === 16);
+                const isHi = (i === 0 || i === 1);
                 headGroup.add(createCurvedHairLock(pts, 0.036, isHi ? highlightHairMat : brownHairMat));
             }
 
-            // Realistic Parted Curtain Bangs with Warm Caramel/Blonde Front Highlights
+            // Signature Parted Curtain Bangs matching Photo 1:
+            // Prominent golden-blonde/caramel sweep on viewer's left (-X), wispy strands over forehead, medium-brown sweep on viewer's right (+X)
             const curtainBangs = [
-                // Left-side swept curtain bangs (with signature blonde/caramel highlight in front)
+                // Viewer's Left (-X): Prominent bleached/caramel curtain bang sweeping down to cheekbone level
                 {
-                    hi: true, w: 0.032,
+                    hi: true, w: 0.038,
                     pts: [
-                        new THREE.Vector3(-0.008, 0.142, 0.055),
-                        new THREE.Vector3(-0.045, 0.112, 0.122),
-                        new THREE.Vector3(-0.082, 0.052, 0.128),
-                        new THREE.Vector3(-0.105, 0.002, 0.102)
+                        new THREE.Vector3(-0.008, 0.145, 0.056),
+                        new THREE.Vector3(-0.052, 0.112, 0.126),
+                        new THREE.Vector3(-0.096, 0.048, 0.130),
+                        new THREE.Vector3(-0.122, -0.008, 0.104)
                     ]
                 },
                 {
-                    hi: true, w: 0.030,
+                    hi: true, w: 0.035,
                     pts: [
-                        new THREE.Vector3(-0.005, 0.144, 0.062),
-                        new THREE.Vector3(-0.028, 0.108, 0.130),
-                        new THREE.Vector3(-0.055, 0.048, 0.136),
-                        new THREE.Vector3(-0.072, 0.008, 0.118)
+                        new THREE.Vector3(-0.004, 0.146, 0.064),
+                        new THREE.Vector3(-0.035, 0.108, 0.133),
+                        new THREE.Vector3(-0.068, 0.045, 0.138),
+                        new THREE.Vector3(-0.092, 0.002, 0.118)
                     ]
                 },
-                {
-                    hi: false, w: 0.034,
-                    pts: [
-                        new THREE.Vector3(-0.020, 0.140, 0.042),
-                        new THREE.Vector3(-0.078, 0.105, 0.105),
-                        new THREE.Vector3(-0.118, 0.042, 0.098),
-                        new THREE.Vector3(-0.128, -0.015, 0.065)
-                    ]
-                },
-                // Delicate center-parted wisps grazing the bridge/brow
-                {
-                    hi: true, w: 0.020,
-                    pts: [
-                        new THREE.Vector3(-0.004, 0.142, 0.068),
-                        new THREE.Vector3(-0.014, 0.102, 0.134),
-                        new THREE.Vector3(-0.022, 0.046, 0.138),
-                        new THREE.Vector3(-0.026, 0.018, 0.130)
-                    ]
-                },
-                {
-                    hi: true, w: 0.020,
-                    pts: [
-                        new THREE.Vector3(0.006, 0.142, 0.068),
-                        new THREE.Vector3(0.016, 0.102, 0.134),
-                        new THREE.Vector3(0.024, 0.048, 0.138),
-                        new THREE.Vector3(0.028, 0.020, 0.130)
-                    ]
-                },
-                // Right-side swept curtain bangs
                 {
                     hi: true, w: 0.028,
                     pts: [
-                        new THREE.Vector3(0.008, 0.144, 0.060),
-                        new THREE.Vector3(0.036, 0.110, 0.128),
-                        new THREE.Vector3(0.064, 0.052, 0.132),
-                        new THREE.Vector3(0.082, 0.010, 0.114)
+                        new THREE.Vector3(-0.002, 0.144, 0.068),
+                        new THREE.Vector3(-0.020, 0.104, 0.136),
+                        new THREE.Vector3(-0.040, 0.046, 0.141),
+                        new THREE.Vector3(-0.052, 0.012, 0.132)
                     ]
                 },
                 {
-                    hi: false, w: 0.034,
+                    hi: false, w: 0.036,
                     pts: [
-                        new THREE.Vector3(0.015, 0.142, 0.050),
-                        new THREE.Vector3(0.065, 0.108, 0.115),
-                        new THREE.Vector3(0.102, 0.048, 0.112),
-                        new THREE.Vector3(0.118, -0.005, 0.085)
+                        new THREE.Vector3(-0.022, 0.142, 0.042),
+                        new THREE.Vector3(-0.082, 0.104, 0.108),
+                        new THREE.Vector3(-0.122, 0.040, 0.098),
+                        new THREE.Vector3(-0.134, -0.018, 0.066)
+                    ]
+                },
+                // Delicate center-parted wisps grazing the upper bridge & inner brows (just like Photo 1)
+                {
+                    hi: true, w: 0.019,
+                    pts: [
+                        new THREE.Vector3(-0.002, 0.142, 0.070),
+                        new THREE.Vector3(-0.010, 0.098, 0.136),
+                        new THREE.Vector3(-0.016, 0.042, 0.140),
+                        new THREE.Vector3(-0.020, 0.014, 0.134)
                     ]
                 },
                 {
-                    hi: false, w: 0.034,
+                    hi: false, w: 0.019,
                     pts: [
-                        new THREE.Vector3(0.025, 0.138, 0.035),
-                        new THREE.Vector3(0.092, 0.098, 0.092),
-                        new THREE.Vector3(0.125, 0.035, 0.078),
-                        new THREE.Vector3(0.130, -0.022, 0.048)
+                        new THREE.Vector3(0.006, 0.142, 0.070),
+                        new THREE.Vector3(0.014, 0.098, 0.136),
+                        new THREE.Vector3(0.020, 0.044, 0.140),
+                        new THREE.Vector3(0.024, 0.016, 0.134)
+                    ]
+                },
+                // Viewer's Right (+X): Warm chestnut-brown curtain bangs sweeping toward right temple (leaving ear visible)
+                {
+                    hi: false, w: 0.032,
+                    pts: [
+                        new THREE.Vector3(0.008, 0.144, 0.062),
+                        new THREE.Vector3(0.038, 0.108, 0.130),
+                        new THREE.Vector3(0.068, 0.048, 0.134),
+                        new THREE.Vector3(0.088, 0.008, 0.116)
+                    ]
+                },
+                {
+                    hi: true, w: 0.026,
+                    pts: [
+                        new THREE.Vector3(0.012, 0.143, 0.056),
+                        new THREE.Vector3(0.052, 0.108, 0.122),
+                        new THREE.Vector3(0.084, 0.050, 0.124),
+                        new THREE.Vector3(0.102, 0.010, 0.102)
+                    ]
+                },
+                {
+                    hi: false, w: 0.035,
+                    pts: [
+                        new THREE.Vector3(0.018, 0.142, 0.048),
+                        new THREE.Vector3(0.070, 0.106, 0.114),
+                        new THREE.Vector3(0.106, 0.048, 0.108),
+                        new THREE.Vector3(0.118, 0.002, 0.082)
                     ]
                 }
             ];
@@ -1690,7 +1728,7 @@
             });
 
             breathingGroup.add(headGroup);
-            scene.add(characterGroup);
+            sceneRootGroup.add(characterGroup);
         }
 
         // ==========================================
@@ -1825,30 +1863,30 @@
                 btnEl.classList.add('active');
             }
             if (preset === 'front') {
-                orbit.desiredTheta = 0.12;
-                orbit.desiredPhi = 1.34;
-                orbit.desiredRadius = 4.6;
-                orbit.desiredTarget.set(0, 1.25, 0);
+                orbit.desiredTheta = 0.10;
+                orbit.desiredPhi = 1.36;
+                orbit.desiredRadius = 4.65;
+                orbit.desiredTarget.set(0, 1.12, 0);
             } else if (preset === 'side') {
                 orbit.desiredTheta = 0.68;
                 orbit.desiredPhi = 1.22;
                 orbit.desiredRadius = 4.5;
-                orbit.desiredTarget.set(0, 1.18, 0);
+                orbit.desiredTarget.set(0, 1.08, 0);
             } else if (preset === 'low') {
                 orbit.desiredTheta = 0.24;
                 orbit.desiredPhi = 1.62;
                 orbit.desiredRadius = 4.2;
-                orbit.desiredTarget.set(0, 1.32, 0);
+                orbit.desiredTarget.set(0, 1.18, 0);
             } else if (preset === 'back') {
                 orbit.desiredTheta = Math.PI - 0.18;
                 orbit.desiredPhi = 1.15;
                 orbit.desiredRadius = 4.4;
-                orbit.desiredTarget.set(0, 1.20, 0);
+                orbit.desiredTarget.set(0, 1.10, 0);
             } else if (preset === 'portrait') {
                 orbit.desiredTheta = 0.08;
                 orbit.desiredPhi = 1.44;
                 orbit.desiredRadius = 1.85;
-                orbit.desiredTarget.set(0.02, 1.68, 0.02);
+                orbit.desiredTarget.set(0.02, 1.82, 0.02);
             }
         };
 
@@ -1873,6 +1911,11 @@
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
+
+            // Elevate the entire 3D model & escalator diorama upwards in the viewport
+            sceneRootGroup = new THREE.Group();
+            sceneRootGroup.position.y = 0.24;
+            scene.add(sceneRootGroup);
 
             setupLights();
             buildEscalatorEnvironment();
